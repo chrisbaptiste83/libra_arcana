@@ -1,0 +1,67 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-heading text-2xl font-bold gradient-gold-text"><%= @ebook.title %></h1>
+  <div class="flex items-center gap-3">
+    <%= link_to "Edit", edit_admin_ebook_path(@ebook), class: "btn-gold text-sm" %>
+    <%= button_to "Delete", admin_ebook_path(@ebook), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this ebook?" }, class: "btn-danger text-sm" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="card-dark p-5 !transform-none">
+    <% if @ebook.cover_image.attached? %>
+      <%= image_tag @ebook.cover_image, class: "w-full rounded" %>
+    <% else %>
+      <div class="aspect-[3/4] bg-gray-800/50 rounded flex items-center justify-center text-gray-600">
+        <span>No cover image</span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="lg:col-span-2 space-y-4">
+    <div class="card-dark p-5 !transform-none">
+      <dl class="grid grid-cols-2 gap-4">
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Author</dt>
+          <dd class="text-gray-200"><%= @ebook.author %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Price</dt>
+          <dd class="text-gold font-semibold"><%= @ebook.formatted_price %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Category</dt>
+          <dd><span class="badge-purple"><%= @ebook.category.name %></span></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Featured</dt>
+          <dd class="text-gray-200"><%= @ebook.featured? ? "Yes" : "No" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Pages</dt>
+          <dd class="text-gray-200"><%= @ebook.page_count || "-" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">ISBN</dt>
+          <dd class="text-gray-200"><%= @ebook.isbn || "-" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Language</dt>
+          <dd class="text-gray-200"><%= @ebook.language || "-" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Year</dt>
+          <dd class="text-gray-200"><%= @ebook.publication_year || "-" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 uppercase">Ebook File</dt>
+          <dd class="text-gray-200"><%= @ebook.ebook_file.attached? ? @ebook.ebook_file.filename : "Not uploaded" %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="card-dark p-5 !transform-none">
+      <h3 class="text-xs text-gray-500 uppercase mb-2">Description</h3>
+      <p class="text-gray-400 text-sm leading-relaxed"><%= @ebook.description %></p>
+    </div>
+  </div>
+</div>

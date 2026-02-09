@@ -1,0 +1,74 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="mb-8">
+    <h1 class="font-heading text-3xl md:text-4xl font-bold gradient-gold-text mb-2">Welcome back, <%= current_user.first_name %></h1>
+    <p class="text-gray-500">Your mystical library dashboard</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+    <div class="card-dark p-6 !transform-none">
+      <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Spent</p>
+      <p class="text-2xl font-bold text-gold">$<%= '%.2f' % @total_spent %></p>
+    </div>
+    <div class="card-dark p-6 !transform-none">
+      <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Orders</p>
+      <p class="text-2xl font-bold text-gray-200"><%= @total_orders %></p>
+    </div>
+    <div class="card-dark p-6 !transform-none">
+      <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Active Downloads</p>
+      <p class="text-2xl font-bold text-mystic-purple-light"><%= @download_count %></p>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+    <%= link_to dashboard_library_path, class: "card-dark p-6 flex items-center gap-4 group" do %>
+      <div class="w-12 h-12 rounded-full bg-mystic-purple/10 border border-mystic-purple/30 flex items-center justify-center group-hover:bg-mystic-purple/20 transition-colors">
+        <svg class="w-6 h-6 text-mystic-purple-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <div>
+        <h3 class="font-heading text-lg font-semibold text-gray-200 group-hover:text-gold transition-colors">My Library</h3>
+        <p class="text-sm text-gray-500">Access your purchased ebooks</p>
+      </div>
+    <% end %>
+
+    <%= link_to dashboard_orders_path, class: "card-dark p-6 flex items-center gap-4 group" do %>
+      <div class="w-12 h-12 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+        <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      </div>
+      <div>
+        <h3 class="font-heading text-lg font-semibold text-gray-200 group-hover:text-gold transition-colors">Order History</h3>
+        <p class="text-sm text-gray-500">View past purchases</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Recent Orders -->
+  <% if @recent_orders.any? %>
+    <h2 class="font-heading text-2xl font-bold text-gray-200 mb-4">Recent Orders</h2>
+    <div class="card-dark overflow-hidden">
+      <table class="table-dark">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recent_orders.each do |order| %>
+            <tr>
+              <td class="text-gray-300">#<%= order.id %></td>
+              <td class="text-gray-400 text-sm"><%= order.order_items.map { |i| i.ebook.title }.join(", ") %></td>
+              <td class="text-gold font-semibold">$<%= '%.2f' % order.total %></td>
+              <td><span class="badge-<%= order.status == 'completed' ? 'gold' : 'purple' %>"><%= order.status.capitalize %></span></td>
+              <td class="text-sm text-gray-500"><%= order.created_at.strftime("%b %d, %Y") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

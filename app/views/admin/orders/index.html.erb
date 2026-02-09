@@ -1,0 +1,32 @@
+<h1 class="font-heading text-2xl font-bold gradient-gold-text mb-6">Orders</h1>
+
+<div class="card-dark overflow-hidden !transform-none">
+  <table class="table-dark">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <td class="text-gray-300">#<%= order.id %></td>
+          <td class="text-gray-400 text-sm"><%= order.user.email %></td>
+          <td class="text-gray-400 text-sm"><%= order.order_items.size %></td>
+          <td class="text-gold font-medium">$<%= '%.2f' % order.total %></td>
+          <td><span class="badge-<%= order.status == 'completed' ? 'gold' : 'purple' %>"><%= order.status.capitalize %></span></td>
+          <td class="text-gray-500 text-sm"><%= order.created_at.strftime("%b %d, %Y") %></td>
+          <td><%= link_to "View", admin_order_path(order), class: "text-sm text-gold hover:text-gold-light transition-colors" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= raw pagy_custom_nav(@pagy) %>

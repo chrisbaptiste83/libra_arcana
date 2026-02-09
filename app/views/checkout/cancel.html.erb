@@ -1,0 +1,13 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+  <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-red-900/30 border border-red-700/30 flex items-center justify-center">
+    <svg class="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+  </div>
+
+  <h1 class="font-heading text-3xl font-bold text-gray-200 mb-4">Checkout Cancelled</h1>
+  <p class="text-gray-400 mb-8">Your purchase was not completed. No charges have been made.</p>
+
+  <div class="flex flex-wrap justify-center gap-4">
+    <%= link_to "Return to Cart", cart_path, class: "btn-gold" %>
+    <%= link_to "Continue Browsing", ebooks_path, class: "btn-outline-gold" %>
+  </div>
+</div>

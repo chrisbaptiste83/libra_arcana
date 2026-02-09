@@ -1,0 +1,87 @@
+<%= form_with(model: [:admin, ebook], class: "space-y-6") do |f| %>
+  <% if ebook.errors.any? %>
+    <div class="p-4 rounded-lg bg-red-900/30 border border-red-700/30">
+      <ul class="text-sm text-red-300 space-y-1">
+        <% ebook.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Title</label>
+      <%= f.text_field :title, class: "input-dark" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Author</label>
+      <%= f.text_field :author, class: "input-dark" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Price ($)</label>
+      <%= f.number_field :price, step: 0.01, min: 0.01, class: "input-dark" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Category</label>
+      <%= f.collection_select :category_id, Category.order(:name), :id, :name, { prompt: "Select category" }, class: "input-dark" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Page Count</label>
+      <%= f.number_field :page_count, class: "input-dark" %>
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-sm text-gray-400 mb-1">Description</label>
+    <%= f.text_area :description, rows: 5, class: "input-dark" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">ISBN</label>
+      <%= f.text_field :isbn, class: "input-dark" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Language</label>
+      <%= f.text_field :language, class: "input-dark" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Publication Year</label>
+      <%= f.number_field :publication_year, class: "input-dark" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <%= f.check_box :featured, class: "rounded border-gray-600 bg-gray-800 text-gold focus:ring-gold" %>
+    <label class="text-sm text-gray-400">Featured ebook</label>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div data-controller="image-preview">
+      <label class="block text-sm text-gray-400 mb-1">Cover Image</label>
+      <%= f.file_field :cover_image, accept: "image/*", data: { action: "change->image-preview#preview", image_preview_target: "input" }, class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 cursor-pointer" %>
+      <% if ebook.cover_image.attached? %>
+        <div class="mt-2">
+          <%= image_tag ebook.cover_image, class: "w-24 h-32 object-cover rounded" %>
+        </div>
+      <% end %>
+      <img data-image-preview-target="preview" class="mt-2 w-24 h-32 object-cover rounded hidden">
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Ebook File (PDF/EPUB)</label>
+      <%= f.file_field :ebook_file, accept: ".pdf,.epub", class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-mystic-purple/10 file:text-mystic-purple-light hover:file:bg-mystic-purple/20 cursor-pointer" %>
+      <% if ebook.ebook_file.attached? %>
+        <p class="text-xs text-gray-500 mt-2">Current file: <%= ebook.ebook_file.filename %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <%= f.submit class: "btn-gold" %>
+    <%= link_to "Cancel", admin_ebooks_path, class: "btn-outline-gold" %>
+  </div>
+<% end %>

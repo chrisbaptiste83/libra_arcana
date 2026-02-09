@@ -1,0 +1,73 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="mb-8">
+    <h1 class="font-heading text-3xl md:text-4xl font-bold gradient-gold-text mb-2">Ebook Catalog</h1>
+    <p class="text-gray-500">Discover your next mystical read</p>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar Filters -->
+    <aside class="lg:w-64 flex-shrink-0">
+      <div class="card-dark p-5 sticky top-20">
+        <h3 class="font-heading text-lg font-semibold text-gold mb-4">Filters</h3>
+
+        <%= form_tag ebooks_path, method: :get, data: { controller: "search", action: "input->search#submit" } do %>
+          <!-- Search -->
+          <div class="mb-5">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Search</label>
+            <input type="text" name="search" value="<%= params[:search] %>" placeholder="Title, author..." class="input-dark text-sm" data-search-target="input">
+          </div>
+
+          <!-- Category -->
+          <div class="mb-5">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Category</label>
+            <select name="category_id" class="input-dark text-sm" onchange="this.form.requestSubmit()">
+              <option value="">All Categories</option>
+              <% @categories.each do |cat| %>
+                <option value="<%= cat.id %>" <%= "selected" if params[:category_id] == cat.id.to_s %>><%= cat.name %></option>
+              <% end %>
+            </select>
+          </div>
+
+          <!-- Sort -->
+          <div class="mb-5">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Sort By</label>
+            <select name="sort" class="input-dark text-sm" onchange="this.form.requestSubmit()">
+              <option value="newest" <%= "selected" if params[:sort] == "newest" %>>Newest</option>
+              <option value="title" <%= "selected" if params[:sort] == "title" %>>Title A-Z</option>
+              <option value="price_asc" <%= "selected" if params[:sort] == "price_asc" %>>Price: Low to High</option>
+              <option value="price_desc" <%= "selected" if params[:sort] == "price_desc" %>>Price: High to Low</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-gold w-full text-sm">Apply Filters</button>
+          <% if params[:search].present? || params[:category_id].present? || params[:sort].present? %>
+            <%= link_to "Clear Filters", ebooks_path, class: "block text-center text-xs text-gray-500 hover:text-gold mt-2 transition-colors" %>
+          <% end %>
+        <% end %>
+      </div>
+    </aside>
+
+    <!-- Ebook Grid -->
+    <div class="flex-1">
+      <div class="flex items-center justify-between mb-6">
+        <p class="text-sm text-gray-500"><%= @pagy.count %> ebooks found</p>
+      </div>
+
+      <% if @ebooks.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          <% @ebooks.each do |ebook| %>
+            <%= render "shared/ebook_card", ebook: ebook %>
+          <% end %>
+        </div>
+
+        <%= raw pagy_custom_nav(@pagy) %>
+      <% else %>
+        <div class="text-center py-20">
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <h3 class="font-heading text-xl text-gray-400 mb-2">No ebooks found</h3>
+          <p class="text-sm text-gray-600">Try adjusting your search or filters.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

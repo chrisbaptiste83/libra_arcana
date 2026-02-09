@@ -1,0 +1,65 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <h1 class="font-heading text-3xl md:text-4xl font-bold gradient-gold-text mb-8">Your Cart</h1>
+
+  <% if @ebooks.any? %>
+    <div class="card-dark overflow-hidden mb-6">
+      <table class="table-dark">
+        <thead>
+          <tr>
+            <th>Ebook</th>
+            <th class="text-right">Price</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @ebooks.each do |ebook| %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-16 rounded bg-gray-800/50 overflow-hidden flex-shrink-0">
+                    <% if ebook.cover_image.attached? %>
+                      <%= image_tag ebook.cover_image, class: "w-full h-full object-cover" %>
+                    <% else %>
+                      <div class="w-full h-full flex items-center justify-center text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div>
+                    <%= link_to ebook.title, ebook_path(ebook), class: "font-medium text-gray-200 hover:text-gold transition-colors" %>
+                    <p class="text-xs text-gray-500"><%= ebook.author %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-right text-gold font-semibold"><%= ebook.formatted_price %></td>
+              <td class="text-right">
+                <%= button_to remove_cart_path(ebook_id: ebook.id), method: :delete, class: "text-red-400 hover:text-red-300 text-sm transition-colors" do %>
+                  Remove
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Totals -->
+    <div class="card-dark p-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-gray-400">Subtotal (<%= @ebooks.size %> items)</span>
+        <span class="text-2xl font-bold text-gold">$<%= '%.2f' % @ebooks.sum(&:price) %></span>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <%= button_to "Proceed to Checkout", checkout_path, class: "btn-gold flex-1 text-center py-3" %>
+        <%= button_to "Clear Cart", clear_cart_path, method: :delete, class: "btn-outline-gold flex-1 text-center py-3" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center py-20">
+      <svg class="w-20 h-20 mx-auto mb-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      <h3 class="font-heading text-2xl text-gray-400 mb-2">Your cart is empty</h3>
+      <p class="text-gray-600 mb-6">Browse our collection and discover your next mystical read.</p>
+      <%= link_to "Browse Ebooks", ebooks_path, class: "btn-gold" %>
+    </div>
+  <% end %>
+</div>

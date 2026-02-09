@@ -1,0 +1,85 @@
+<!-- Hero Section -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-mystic-purple/5 via-transparent to-transparent"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative">
+    <div class="text-center max-w-3xl mx-auto">
+      <h1 class="font-heading text-5xl md:text-7xl font-bold gradient-gold-text mb-6 leading-tight">
+        Unlock Ancient Wisdom
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed">
+        Explore our curated collection of mystical ebooks spanning astrology, tarot, alchemy, and the hidden arts. Instant digital download.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <%= link_to "Browse Catalog", ebooks_path, class: "btn-gold text-lg px-8 py-3" %>
+        <%= link_to "Learn More", about_path, class: "btn-outline-gold text-lg px-8 py-3" %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Ebooks -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="text-center mb-12">
+    <h2 class="font-heading text-3xl md:text-4xl font-bold gradient-gold-text mb-3">Featured Grimoires</h2>
+    <p class="text-gray-500">Hand-picked selections for the discerning seeker</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <% @featured_ebooks.limit(8).each do |ebook| %>
+      <%= render "shared/ebook_card", ebook: ebook %>
+    <% end %>
+  </div>
+
+  <div class="text-center mt-10">
+    <%= link_to "View All Ebooks", ebooks_path, class: "btn-outline-gold" %>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="bg-gray-900/30 border-y border-gray-800/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold gradient-gold-text mb-3">Paths of Knowledge</h2>
+      <p class="text-gray-500">Explore our mystical categories</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <% @categories.each do |category| %>
+        <%= link_to category_path(slug: category.slug), class: "card-dark p-6 text-center group" do %>
+          <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-mystic-purple/10 border border-mystic-purple/30 flex items-center justify-center group-hover:bg-mystic-purple/20 transition-colors">
+            <svg class="w-6 h-6 text-mystic-purple-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+          </div>
+          <h3 class="font-heading text-lg font-semibold text-gray-200 group-hover:text-gold transition-colors mb-1"><%= category.name %></h3>
+          <p class="text-xs text-gray-500"><%= category.ebooks.count %> titles</p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="text-center">
+      <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
+        <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <h3 class="font-heading text-xl font-semibold text-gray-200 mb-2">Instant Download</h3>
+      <p class="text-sm text-gray-500">Purchase and download immediately. No waiting, no shipping. Pure digital knowledge.</p>
+    </div>
+    <div class="text-center">
+      <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
+        <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      </div>
+      <h3 class="font-heading text-xl font-semibold text-gray-200 mb-2">Secure Payments</h3>
+      <p class="text-sm text-gray-500">Protected by Stripe. Your financial information is always safe and encrypted.</p>
+    </div>
+    <div class="text-center">
+      <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
+        <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      </div>
+      <h3 class="font-heading text-xl font-semibold text-gray-200 mb-2">Curated Collection</h3>
+      <p class="text-sm text-gray-500">Every title hand-selected by practitioners. Quality over quantity, always.</p>
+    </div>
+  </div>
+</section>

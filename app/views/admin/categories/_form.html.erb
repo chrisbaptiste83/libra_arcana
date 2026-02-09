@@ -1,0 +1,37 @@
+<%= form_with(model: [:admin, category], class: "space-y-6") do |f| %>
+  <% if category.errors.any? %>
+    <div class="p-4 rounded-lg bg-red-900/30 border border-red-700/30">
+      <ul class="text-sm text-red-300 space-y-1">
+        <% category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Name</label>
+      <%= f.text_field :name, class: "input-dark" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Slug <span class="text-gray-600">(auto-generated if blank)</span></label>
+      <%= f.text_field :slug, class: "input-dark" %>
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-sm text-gray-400 mb-1">Icon</label>
+    <%= f.text_field :icon, class: "input-dark", placeholder: "e.g. star, flask, eye" %>
+  </div>
+
+  <div>
+    <label class="block text-sm text-gray-400 mb-1">Description</label>
+    <%= f.text_area :description, rows: 4, class: "input-dark" %>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <%= f.submit class: "btn-gold" %>
+    <%= link_to "Cancel", admin_categories_path, class: "btn-outline-gold" %>
+  </div>
+<% end %>

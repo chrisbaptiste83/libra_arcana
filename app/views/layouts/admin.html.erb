@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <title>Admin - Libra Arcana</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="min-h-full bg-dark-bg text-gray-200">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-gray-900/50 border-r border-gray-800/50 flex-shrink-0 hidden lg:block">
+        <div class="p-6">
+          <%= link_to root_path, class: "flex items-center gap-2 mb-8" do %>
+            <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <span class="font-heading font-bold gradient-gold-text">Admin Panel</span>
+          <% end %>
+
+          <nav class="space-y-1">
+            <%= link_to admin_dashboard_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm #{'bg-gray-800/50 text-gold' if controller_name == 'dashboard'} text-gray-400 hover:text-gold hover:bg-gray-800/30 transition-colors" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              Dashboard
+            <% end %>
+
+            <%= link_to admin_ebooks_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm #{'bg-gray-800/50 text-gold' if controller_name == 'ebooks'} text-gray-400 hover:text-gold hover:bg-gray-800/30 transition-colors" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+              Ebooks
+            <% end %>
+
+            <%= link_to admin_categories_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm #{'bg-gray-800/50 text-gold' if controller_name == 'categories'} text-gray-400 hover:text-gold hover:bg-gray-800/30 transition-colors" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+              Categories
+            <% end %>
+
+            <%= link_to admin_orders_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm #{'bg-gray-800/50 text-gold' if controller_name == 'orders'} text-gray-400 hover:text-gold hover:bg-gray-800/30 transition-colors" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              Orders
+            <% end %>
+
+            <%= link_to admin_users_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm #{'bg-gray-800/50 text-gold' if controller_name == 'users'} text-gray-400 hover:text-gold hover:bg-gray-800/30 transition-colors" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              Users
+            <% end %>
+
+            <div class="border-t border-gray-800/30 my-4"></div>
+
+            <%= link_to root_path, class: "flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-gold hover:bg-gray-800/30 transition-colors" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              Back to Store
+            <% end %>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col">
+        <!-- Top bar -->
+        <header class="border-b border-gray-800/50 bg-gray-950/80 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="lg:hidden">
+              <%= link_to root_path, class: "flex items-center gap-2" do %>
+                <span class="font-heading font-bold gradient-gold-text text-sm">Admin</span>
+              <% end %>
+            </div>
+            <div class="flex items-center gap-4 ml-auto">
+              <span class="text-sm text-gray-500"><%= current_user.email %></span>
+              <%= link_to "Sign Out", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-sm text-red-400 hover:text-red-300 transition-colors" %>
+            </div>
+          </div>
+        </header>
+
+        <!-- Flash messages -->
+        <% if notice.present? || alert.present? %>
+          <div class="px-6 pt-4">
+            <% if notice.present? %>
+              <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-emerald-900/30 border border-emerald-700/30 text-emerald-200 text-sm mb-2">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <%= notice %>
+              </div>
+            <% end %>
+            <% if alert.present? %>
+              <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-900/30 border border-red-700/30 text-red-200 text-sm">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/></svg>
+                <%= alert %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <!-- Page content -->
+        <main class="flex-1 p-6">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

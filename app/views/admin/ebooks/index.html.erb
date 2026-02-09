@@ -1,0 +1,47 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-heading text-2xl font-bold gradient-gold-text">Ebooks</h1>
+  <%= link_to "New Ebook", new_admin_ebook_path, class: "btn-gold text-sm" %>
+</div>
+
+<div class="card-dark overflow-hidden !transform-none">
+  <table class="table-dark">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Featured</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @ebooks.each do |ebook| %>
+        <tr>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-10 rounded bg-gray-800/50 overflow-hidden flex-shrink-0">
+                <% if ebook.cover_image.attached? %>
+                  <%= image_tag ebook.cover_image, class: "w-full h-full object-cover" %>
+                <% end %>
+              </div>
+              <span class="font-medium text-gray-200 text-sm"><%= truncate(ebook.title, length: 40) %></span>
+            </div>
+          </td>
+          <td class="text-gray-400 text-sm"><%= ebook.author %></td>
+          <td><span class="badge-purple"><%= ebook.category.name %></span></td>
+          <td class="text-gold font-medium"><%= ebook.formatted_price %></td>
+          <td><%= ebook.featured? ? "Yes" : "-" %></td>
+          <td>
+            <div class="flex items-center gap-2">
+              <%= link_to "Edit", edit_admin_ebook_path(ebook), class: "text-sm text-gold hover:text-gold-light transition-colors" %>
+              <%= link_to "View", admin_ebook_path(ebook), class: "text-sm text-gray-400 hover:text-gray-300 transition-colors" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= raw pagy_custom_nav(@pagy) %>

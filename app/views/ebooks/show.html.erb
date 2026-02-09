@@ -1,0 +1,96 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <!-- Breadcrumb -->
+  <nav class="mb-8 text-sm">
+    <%= link_to "Catalog", ebooks_path, class: "text-gray-500 hover:text-gold transition-colors" %>
+    <span class="text-gray-700 mx-2">/</span>
+    <% if @ebook.category %>
+      <%= link_to @ebook.category.name, category_path(slug: @ebook.category.slug), class: "text-gray-500 hover:text-gold transition-colors" %>
+      <span class="text-gray-700 mx-2">/</span>
+    <% end %>
+    <span class="text-gray-400"><%= truncate(@ebook.title, length: 40) %></span>
+  </nav>
+
+  <div class="flex flex-col lg:flex-row gap-10">
+    <!-- Cover Image -->
+    <div class="lg:w-1/3">
+      <div class="card-dark overflow-hidden aspect-[3/4]">
+        <% if @ebook.cover_image.attached? %>
+          <%= image_tag @ebook.cover_image, class: "w-full h-full object-cover" %>
+        <% else %>
+          <div class="w-full h-full flex flex-col items-center justify-center bg-gray-800/50 text-gray-600">
+            <svg class="w-24 h-24 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <span class="font-heading text-lg"><%= @ebook.category&.name %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="lg:w-2/3">
+      <% if @ebook.featured? %>
+        <span class="badge-gold mb-3 inline-block">Featured</span>
+      <% end %>
+
+      <% if @ebook.category %>
+        <%= link_to @ebook.category.name, category_path(slug: @ebook.category.slug), class: "badge-purple mb-3 inline-block" %>
+      <% end %>
+
+      <h1 class="font-heading text-3xl md:text-4xl font-bold text-gray-100 mb-2"><%= @ebook.title %></h1>
+      <p class="text-lg text-gray-400 mb-6">by <%= @ebook.author %></p>
+
+      <div class="flex items-center gap-6 mb-8">
+        <span class="text-3xl font-bold text-gold"><%= @ebook.formatted_price %></span>
+        <%= button_to add_cart_path(ebook_id: @ebook.id), method: :post, class: "btn-gold text-base px-8 py-3" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          Add to Cart
+        <% end %>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-8">
+        <h3 class="font-heading text-xl font-semibold text-gray-200 mb-3">Description</h3>
+        <p class="text-gray-400 leading-relaxed"><%= @ebook.description %></p>
+      </div>
+
+      <!-- Details Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <% if @ebook.page_count.present? %>
+          <div class="card-dark p-4 text-center !transform-none">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Pages</p>
+            <p class="text-lg font-semibold text-gray-200"><%= @ebook.page_count %></p>
+          </div>
+        <% end %>
+        <% if @ebook.language.present? %>
+          <div class="card-dark p-4 text-center !transform-none">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Language</p>
+            <p class="text-lg font-semibold text-gray-200"><%= @ebook.language %></p>
+          </div>
+        <% end %>
+        <% if @ebook.publication_year.present? %>
+          <div class="card-dark p-4 text-center !transform-none">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Year</p>
+            <p class="text-lg font-semibold text-gray-200"><%= @ebook.publication_year %></p>
+          </div>
+        <% end %>
+        <% if @ebook.isbn.present? %>
+          <div class="card-dark p-4 text-center !transform-none">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">ISBN</p>
+            <p class="text-sm font-semibold text-gray-200"><%= @ebook.isbn %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Ebooks -->
+  <% if @related_ebooks.any? %>
+    <section class="mt-16">
+      <h2 class="font-heading text-2xl font-bold gradient-gold-text mb-6">Related Ebooks</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <% @related_ebooks.each do |ebook| %>
+          <%= render "shared/ebook_card", ebook: ebook %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

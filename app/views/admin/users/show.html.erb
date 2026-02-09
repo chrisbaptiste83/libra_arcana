@@ -1,0 +1,53 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-heading text-2xl font-bold gradient-gold-text"><%= @user.full_name %></h1>
+  <%= link_to "Back to Users", admin_users_path, class: "btn-outline-gold text-sm" %>
+</div>
+
+<div class="card-dark p-6 !transform-none mb-6">
+  <dl class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Email</dt>
+      <dd class="text-gray-200"><%= @user.email %></dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Role</dt>
+      <dd><%= @user.admin? ? '<span class="badge-gold">Admin</span>'.html_safe : '<span class="text-gray-400">Customer</span>'.html_safe %></dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Joined</dt>
+      <dd class="text-gray-200"><%= @user.created_at.strftime("%B %d, %Y") %></dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Total Orders</dt>
+      <dd class="text-gray-200"><%= @orders.count %></dd>
+    </div>
+  </dl>
+</div>
+
+<% if @orders.any? %>
+  <h2 class="font-heading text-lg font-semibold text-gray-200 mb-4">Orders</h2>
+  <div class="card-dark overflow-hidden !transform-none">
+    <table class="table-dark">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @orders.each do |order| %>
+          <tr>
+            <td><%= link_to "##{order.id}", admin_order_path(order), class: "text-gold hover:text-gold-light transition-colors" %></td>
+            <td class="text-gray-400 text-sm"><%= order.order_items.map { |i| i.ebook.title }.join(", ") %></td>
+            <td class="text-gold font-medium">$<%= '%.2f' % order.total %></td>
+            <td><span class="badge-<%= order.status == 'completed' ? 'gold' : 'purple' %>"><%= order.status.capitalize %></span></td>
+            <td class="text-gray-500 text-sm"><%= order.created_at.strftime("%b %d, %Y") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

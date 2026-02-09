@@ -1,0 +1,34 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-heading text-2xl font-bold gradient-gold-text">Categories</h1>
+  <%= link_to "New Category", new_admin_category_path, class: "btn-gold text-sm" %>
+</div>
+
+<div class="card-dark overflow-hidden !transform-none">
+  <table class="table-dark">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Icon</th>
+        <th>Ebooks</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @categories.each do |category| %>
+        <tr>
+          <td class="font-medium text-gray-200"><%= category.name %></td>
+          <td class="text-gray-400 text-sm"><%= category.slug %></td>
+          <td class="text-gray-400 text-sm"><%= category.icon %></td>
+          <td><span class="badge-purple"><%= category.ebooks.size %></span></td>
+          <td>
+            <div class="flex items-center gap-2">
+              <%= link_to "Edit", edit_admin_category_path(category), class: "text-sm text-gold hover:text-gold-light transition-colors" %>
+              <%= button_to "Delete", admin_category_path(category), method: :delete, data: { turbo_confirm: "Delete this category?" }, class: "text-sm text-red-400 hover:text-red-300 transition-colors" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

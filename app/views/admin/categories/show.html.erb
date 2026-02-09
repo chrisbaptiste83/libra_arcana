@@ -1,0 +1,60 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-heading text-2xl font-bold gradient-gold-text"><%= @category.name %></h1>
+  <div class="flex items-center gap-3">
+    <%= link_to "Edit", edit_admin_category_path(@category), class: "btn-gold text-sm" %>
+    <%= button_to "Delete", admin_category_path(@category), method: :delete, data: { turbo_confirm: "Delete this category?" }, class: "btn-danger text-sm" %>
+  </div>
+</div>
+
+<div class="card-dark p-6 !transform-none mb-6">
+  <dl class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Slug</dt>
+      <dd class="text-gray-200"><%= @category.slug %></dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Icon</dt>
+      <dd class="text-gray-200"><%= @category.icon || "-" %></dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Ebooks</dt>
+      <dd class="text-gray-200"><%= @category.ebooks.count %></dd>
+    </div>
+    <div>
+      <dt class="text-xs text-gray-500 uppercase">Created</dt>
+      <dd class="text-gray-200"><%= @category.created_at.strftime("%b %d, %Y") %></dd>
+    </div>
+  </dl>
+  <% if @category.description.present? %>
+    <div class="mt-4 pt-4 border-t border-gray-800/30">
+      <dt class="text-xs text-gray-500 uppercase mb-1">Description</dt>
+      <dd class="text-gray-400 text-sm"><%= @category.description %></dd>
+    </div>
+  <% end %>
+</div>
+
+<% if @category.ebooks.any? %>
+  <h2 class="font-heading text-lg font-semibold text-gray-200 mb-4">Ebooks in this category</h2>
+  <div class="card-dark overflow-hidden !transform-none">
+    <table class="table-dark">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @category.ebooks.each do |ebook| %>
+          <tr>
+            <td class="text-gray-200 text-sm"><%= ebook.title %></td>
+            <td class="text-gray-400 text-sm"><%= ebook.author %></td>
+            <td class="text-gold"><%= ebook.formatted_price %></td>
+            <td><%= link_to "View", admin_ebook_path(ebook), class: "text-sm text-gold hover:text-gold-light transition-colors" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

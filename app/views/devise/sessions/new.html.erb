@@ -1,0 +1,43 @@
+<div class="max-w-md mx-auto px-4 py-16">
+  <div class="text-center mb-8">
+    <h1 class="font-heading text-3xl font-bold gradient-gold-text mb-2">Welcome Back</h1>
+    <p class="text-gray-500">Sign in to your Libra Arcana account</p>
+  </div>
+
+  <div class="card-dark p-8">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Email</label>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input-dark", placeholder: "you@example.com" %>
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Password</label>
+          <%= f.password_field :password, autocomplete: "current-password", class: "input-dark", placeholder: "Your password" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="flex items-center gap-2">
+            <%= f.check_box :remember_me, class: "rounded border-gray-600 bg-gray-800 text-gold focus:ring-gold" %>
+            <label class="text-sm text-gray-400">Remember me</label>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.submit "Sign In", class: "btn-gold w-full py-3" %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="mt-6 text-center space-y-2">
+      <p class="text-sm text-gray-500">
+        Don't have an account?
+        <%= link_to "Sign up", new_user_registration_path, class: "text-gold hover:text-gold-light transition-colors" %>
+      </p>
+      <p class="text-sm">
+        <%= link_to "Forgot your password?", new_user_password_path, class: "text-gray-500 hover:text-gold transition-colors" %>
+      </p>
+    </div>
+  </div>
+</div>
