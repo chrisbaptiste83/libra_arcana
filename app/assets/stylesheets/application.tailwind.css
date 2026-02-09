@@ -1,33 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold: #d4a843;
-  --color-gold-light: #e8c96a;
-  --color-gold-dark: #b8922e;
-  --color-mystic-purple: #8b5cf6;
-  --color-mystic-purple-light: #a78bfa;
-  --color-mystic-purple-dark: #7c3aed;
-  --color-dark-bg: #030712;
-  --color-dark-card: rgba(17, 24, 39, 0.5);
-  --color-dark-border: rgba(31, 41, 55, 0.5);
-  --font-heading: 'Cormorant Garamond', serif;
-  --font-body: 'Inter', sans-serif;
+  --color-gold: #c9a046;
+  --color-gold-light: #e0c27a;
+  --color-gold-dark: #9a7a2f;
+  --color-mystic-purple: #4b1f2a;
+  --color-mystic-purple-light: #6b2a3a;
+  --color-mystic-purple-dark: #2f121a;
+  --color-dark-bg: #0b0a07;
+  --color-dark-card: rgba(24, 18, 12, 0.72);
+  --color-dark-border: rgba(89, 74, 45, 0.45);
+  --font-heading: 'UnifrakturCook', 'IM Fell English', serif;
+  --font-body: 'IM Fell English', serif;
 }
 
 @layer base {
   body {
     font-family: var(--font-body);
     background-color: var(--color-dark-bg);
-    color: #e5e7eb;
+    color: #e6dcc4;
     min-height: 100vh;
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, rgba(201, 160, 70, 0.08), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(75, 31, 42, 0.18), transparent 55%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.2));
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+    letter-spacing: 0.02em;
   }
 
   input, select, textarea {
-    color: #e5e7eb;
+    color: #f1e7cf;
+  }
+
+  ::selection {
+    background: rgba(201, 160, 70, 0.35);
+    color: #f5ecd6;
   }
 }
 
@@ -38,9 +49,9 @@
     justify-content: center;
     padding: 0.625rem 1.5rem;
     background-color: var(--color-gold);
-    color: #030712;
-    font-weight: 600;
-    border-radius: 0.5rem;
+    color: #1b140b;
+    font-weight: 700;
+    border-radius: 0.375rem;
     transition: all 0.2s ease;
     cursor: pointer;
   }
@@ -57,8 +68,8 @@
     padding: 0.625rem 1.5rem;
     border: 1px solid var(--color-gold);
     color: var(--color-gold);
-    font-weight: 600;
-    border-radius: 0.5rem;
+    font-weight: 700;
+    border-radius: 0.375rem;
     transition: all 0.2s ease;
     cursor: pointer;
     background: transparent;
@@ -75,9 +86,9 @@
     justify-content: center;
     padding: 0.625rem 1.5rem;
     background-color: var(--color-mystic-purple);
-    color: white;
-    font-weight: 600;
-    border-radius: 0.5rem;
+    color: #f3e7d0;
+    font-weight: 700;
+    border-radius: 0.375rem;
     transition: all 0.2s ease;
     cursor: pointer;
   }
@@ -94,8 +105,8 @@
     padding: 0.625rem 1.5rem;
     background-color: #dc2626;
     color: white;
-    font-weight: 600;
-    border-radius: 0.5rem;
+    font-weight: 700;
+    border-radius: 0.375rem;
     transition: all 0.2s ease;
     cursor: pointer;
   }
@@ -105,9 +116,11 @@
   }
 
   .card-dark {
-    background-color: var(--color-dark-card);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.2)),
+      var(--color-dark-card);
     border: 1px solid var(--color-dark-border);
-    border-radius: 0.75rem;
+    border-radius: 0.625rem;
     transition: all 0.3s ease;
   }
   .card-dark:hover {
@@ -126,10 +139,10 @@
   .input-dark {
     width: 100%;
     padding: 0.625rem 1rem;
-    background-color: rgba(17, 24, 39, 0.8);
-    border: 1px solid rgba(75, 85, 99, 0.5);
-    border-radius: 0.5rem;
-    color: #e5e7eb;
+    background-color: rgba(20, 15, 10, 0.85);
+    border: 1px solid rgba(110, 90, 55, 0.5);
+    border-radius: 0.375rem;
+    color: #f1e7cf;
     transition: border-color 0.2s ease;
   }
   .input-dark:focus {
