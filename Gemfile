@@ -24,7 +24,7 @@ gem "devise", "~> 4.9"
 gem "stripe"
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.2"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
