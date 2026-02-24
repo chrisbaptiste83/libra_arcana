@@ -2,10 +2,13 @@
 # frozen_string_literal: true
 
 require "tempfile"
+require "tmpdir"
 require "open3"
+require "vips"
 
 delete_mock = ActiveModel::Type::Boolean.new.cast(ENV.fetch("DELETE_MOCK", "false"))
 generate_covers = ActiveModel::Type::Boolean.new.cast(ENV.fetch("GENERATE_COVERS", "false"))
+scan_pages = ENV.fetch("COVER_SCAN_PAGES", "10").to_i
 limit = ENV["LIMIT"]&.to_i
 
 if delete_mock
@@ -28,6 +31,15 @@ if generate_covers
   skipped = 0
   errors = 0
 
+  def blank_cover?(png_path)
+    image = Vips::Image.new_from_file(png_path, access: :sequential)
+    if image.width > 200
+      image = image.resize(200.0 / image.width)
+    end
+    avg = image.avg
+    avg > 250.0
+  end
+
   scope.find_each do |ebook|
     unless ebook.ebook_file.attached?
       skipped += 1
@@ -45,28 +57,40 @@ if generate_covers
         pdf_tmp.write(ebook.ebook_file.download)
         pdf_tmp.flush
 
-        Tempfile.create(["cover", ""]) do |cover_tmp|
-          cover_tmp.close
-          png_path = "#{cover_tmp.path}.png"
+        Dir.mktmpdir("cover") do |dir|
+          selected = nil
+          (1..scan_pages).each do |page|
+            prefix = File.join(dir, "page-#{page}")
+            png_path = "#{prefix}.png"
+            cmd = ["pdftoppm", "-f", page.to_s, "-l", page.to_s, "-png", "-singlefile", pdf_tmp.path, prefix]
+            _out, err, status = Open3.capture3(*cmd)
+            unless status.success? && File.exist?(png_path) && File.size?(png_path)
+              raise "pdftoppm failed (exit=#{status.exitstatus}) cmd=#{cmd.join(' ')} err=#{err.strip}"
+            end
 
-          cmd = ["pdftoppm", "-f", "1", "-l", "1", "-png", "-singlefile", pdf_tmp.path, cover_tmp.path]
-          _out, err, status = Open3.capture3(*cmd)
-          unless status.success? && File.exist?(png_path) && File.size?(png_path)
-            raise "pdftoppm failed (exit=#{status.exitstatus}) cmd=#{cmd.join(' ')} err=#{err.strip}"
+            if blank_cover?(png_path)
+              File.delete(png_path) if File.exist?(png_path)
+              next
+            end
+
+            selected = png_path
+            break
           end
 
-          ebook.cover_image.attach(
-            io: File.open(png_path, "rb"),
-            filename: "#{ebook.title.parameterize}-cover.png",
-            content_type: "image/png"
-          )
-        ensure
-          File.delete(png_path) if png_path && File.exist?(png_path)
+          if selected
+            ebook.cover_image.attach(
+              io: File.open(selected, "rb"),
+              filename: "#{ebook.title.parameterize}-cover.png",
+              content_type: "image/png"
+            )
+            processed += 1
+            puts "COVER: #{ebook.title}"
+          else
+            skipped += 1
+            puts "SKIP (blank): #{ebook.title}"
+          end
         end
       end
-
-      processed += 1
-      puts "COVER: #{ebook.title}"
     rescue => e
       errors += 1
       warn "ERROR: #{ebook.title} - #{e.class}: #{e.message}"
