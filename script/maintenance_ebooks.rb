@@ -8,6 +8,8 @@ require "vips"
 
 delete_mock = ActiveModel::Type::Boolean.new.cast(ENV.fetch("DELETE_MOCK", "false"))
 generate_covers = ActiveModel::Type::Boolean.new.cast(ENV.fetch("GENERATE_COVERS", "false"))
+extract_metadata = ActiveModel::Type::Boolean.new.cast(ENV.fetch("EXTRACT_METADATA", "false"))
+only_unknown_author = ActiveModel::Type::Boolean.new.cast(ENV.fetch("ONLY_UNKNOWN_AUTHOR", "true"))
 scan_pages = ENV.fetch("COVER_SCAN_PAGES", "10").to_i
 limit = ENV["LIMIT"]&.to_i
 
@@ -100,6 +102,56 @@ if generate_covers
   puts "Done. processed=#{processed} skipped=#{skipped} errors=#{errors}"
 end
 
-if !delete_mock && !generate_covers
-  puts "Nothing to do. Set DELETE_MOCK=true and/or GENERATE_COVERS=true."
+if extract_metadata
+  scope = Ebook.all
+  scope = scope.limit(limit) if limit&.positive?
+  puts "Extracting PDF metadata for #{scope.count} ebooks..."
+
+  updated = 0
+  skipped = 0
+  errors = 0
+
+  scope.find_each do |ebook|
+    unless ebook.ebook_file.attached? && ebook.ebook_file.content_type&.include?("pdf")
+      skipped += 1
+      next
+    end
+
+    if only_unknown_author
+      current = ebook.author.to_s.strip
+      next unless current.empty? || current.casecmp("unknown").zero?
+    end
+
+    begin
+      Tempfile.create(["ebook", ".pdf"]) do |pdf_tmp|
+        pdf_tmp.binmode
+        pdf_tmp.write(ebook.ebook_file.download)
+        pdf_tmp.flush
+
+        out, err, status = Open3.capture3("pdfinfo", pdf_tmp.path)
+        unless status.success?
+          raise "pdfinfo failed: #{err.strip}"
+        end
+
+        line = out.lines.find { |l| l.start_with?("Author:") }
+        author = line&.split("Author:", 2)&.last&.strip
+        if author && !author.empty? && author.casecmp("unknown").nonzero?
+          ebook.update!(author: author)
+          updated += 1
+          puts "AUTHOR: #{ebook.title} => #{author}"
+        else
+          skipped += 1
+        end
+      end
+    rescue => e
+      errors += 1
+      warn "ERROR: #{ebook.title} - #{e.class}: #{e.message}"
+    end
+  end
+
+  puts "Done. updated=#{updated} skipped=#{skipped} errors=#{errors}"
+end
+
+if !delete_mock && !generate_covers && !extract_metadata
+  puts "Nothing to do. Set DELETE_MOCK=true and/or GENERATE_COVERS=true and/or EXTRACT_METADATA=true."
 end

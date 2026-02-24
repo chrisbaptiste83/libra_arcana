@@ -3,6 +3,7 @@
 
 require "active_support/core_ext/string/inflections"
 require "marcel"
+require "open3"
 
 import_dir = ENV.fetch("IMPORT_DIR", "/tmp/ebooks_import")
 price_base = ENV.fetch("IMPORT_PRICE_BASE", "9.99").to_f
@@ -22,6 +23,15 @@ def price_for_bytes(bytes, base:, per_10mb:, cap:)
   increments = (size_mb / 10.0).ceil
   price = base + (increments * per_10mb)
   [price, cap].min.round(2)
+end
+
+def pdf_author(path)
+  out, _err, status = Open3.capture3("pdfinfo", path)
+  return nil unless status.success?
+
+  line = out.lines.find { |l| l.start_with?("Author:") }
+  author = line&.split("Author:", 2)&.last&.strip
+  author if author && !author.empty? && author.downcase != "unknown"
 end
 
 paths = Dir.glob(File.join(import_dir, "**", "*.{pdf,epub,PDF,EPUB}"))
@@ -59,9 +69,10 @@ paths.each do |path|
   end
 
   begin
+    author = pdf_author(path) || author_default
     ebook ||= Ebook.new(
       title: title,
-      author: author_default,
+      author: author,
       price: price,
       description: description,
       featured: featured_default,
