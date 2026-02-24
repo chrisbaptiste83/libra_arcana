@@ -12,6 +12,7 @@ extract_metadata = ActiveModel::Type::Boolean.new.cast(ENV.fetch("EXTRACT_METADA
 only_unknown_author = ActiveModel::Type::Boolean.new.cast(ENV.fetch("ONLY_UNKNOWN_AUTHOR", "true"))
 scan_pages = ENV.fetch("COVER_SCAN_PAGES", "25").to_i
 regenerate_covers = ActiveModel::Type::Boolean.new.cast(ENV.fetch("REGENERATE_COVERS", "false"))
+repair_pdfs = ActiveModel::Type::Boolean.new.cast(ENV.fetch("REPAIR_PDFS", "true"))
 limit = ENV["LIMIT"]&.to_i
 
 if delete_mock
@@ -84,13 +85,25 @@ if generate_covers
         pdf_tmp.write(ebook.ebook_file.download)
         pdf_tmp.flush
 
+        source_pdf = pdf_tmp.path
+        if repair_pdfs
+          Tempfile.create(["ebook_repair", ".pdf"]) do |repaired|
+            _out, err, status = Open3.capture3("qpdf", "--repair", "--stream-data=uncompress", source_pdf, repaired.path)
+            if status.success? && File.size?(repaired.path)
+              source_pdf = repaired.path
+            else
+              warn "WARN: qpdf repair failed for #{ebook.title}: #{err.strip}"
+            end
+          end
+        end
+
         Dir.mktmpdir("cover") do |dir|
           selected = nil
           best_score = -1.0
           (1..scan_pages).each do |page|
             prefix = File.join(dir, "page-#{page}")
             png_path = "#{prefix}.png"
-            cmd = ["pdftoppm", "-f", page.to_s, "-l", page.to_s, "-png", "-singlefile", pdf_tmp.path, prefix]
+            cmd = ["pdftoppm", "-f", page.to_s, "-l", page.to_s, "-png", "-singlefile", source_pdf, prefix]
             _out, err, status = Open3.capture3(*cmd)
             unless status.success? && File.exist?(png_path) && File.size?(png_path)
               raise "pdftoppm failed (exit=#{status.exitstatus}) cmd=#{cmd.join(' ')} err=#{err.strip}"
