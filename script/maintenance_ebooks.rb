@@ -88,7 +88,14 @@ if generate_covers
         source_pdf = pdf_tmp.path
         if repair_pdfs
           Tempfile.create(["ebook_repair", ".pdf"]) do |repaired|
-            _out, err, status = Open3.capture3("qpdf", "--repair", "--stream-data=uncompress", source_pdf, repaired.path)
+            _out, err, status = Open3.capture3(
+              "qpdf",
+              "--qdf",
+              "--object-streams=disable",
+              "--stream-data=uncompress",
+              source_pdf,
+              repaired.path
+            )
             if status.success? && File.size?(repaired.path)
               source_pdf = repaired.path
             else
