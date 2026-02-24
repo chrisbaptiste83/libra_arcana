@@ -25,10 +25,11 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  # Set true only when SSL is actually enabled at the edge.
+  config.assume_ssl = ENV.fetch("APP_PROTOCOL", "http") == "https"
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = ENV.fetch("APP_PROTOCOL", "http") == "https"
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -57,8 +58,11 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # Set host to be used by links generated in mailer templates and Active Storage URLs.
+  app_host = ENV.fetch("APP_HOST", "172.236.243.75")
+  app_protocol = ENV.fetch("APP_PROTOCOL", "http")
+  config.action_mailer.default_url_options = { host: app_host, protocol: app_protocol }
+  config.action_controller.default_url_options = { host: app_host, protocol: app_protocol }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
