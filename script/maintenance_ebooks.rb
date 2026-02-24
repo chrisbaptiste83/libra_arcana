@@ -47,12 +47,12 @@ if generate_covers
 
         Tempfile.create(["cover", ""]) do |cover_tmp|
           cover_tmp.close
-          png_path = "#{cover_tmp.path}-1.png"
+          png_path = "#{cover_tmp.path}.png"
 
-          cmd = ["pdftoppm", "-f", "1", "-l", "1", "-png", pdf_tmp.path, cover_tmp.path]
+          cmd = ["pdftoppm", "-f", "1", "-l", "1", "-png", "-singlefile", pdf_tmp.path, cover_tmp.path]
           _out, err, status = Open3.capture3(*cmd)
-          unless status.success? && File.exist?(png_path)
-            raise "pdftoppm failed: #{err}"
+          unless status.success? && File.exist?(png_path) && File.size?(png_path)
+            raise "pdftoppm failed (exit=#{status.exitstatus}) cmd=#{cmd.join(' ')} err=#{err.strip}"
           end
 
           ebook.cover_image.attach(
