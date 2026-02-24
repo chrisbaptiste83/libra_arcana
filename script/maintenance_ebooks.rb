@@ -10,7 +10,8 @@ delete_mock = ActiveModel::Type::Boolean.new.cast(ENV.fetch("DELETE_MOCK", "fals
 generate_covers = ActiveModel::Type::Boolean.new.cast(ENV.fetch("GENERATE_COVERS", "false"))
 extract_metadata = ActiveModel::Type::Boolean.new.cast(ENV.fetch("EXTRACT_METADATA", "false"))
 only_unknown_author = ActiveModel::Type::Boolean.new.cast(ENV.fetch("ONLY_UNKNOWN_AUTHOR", "true"))
-scan_pages = ENV.fetch("COVER_SCAN_PAGES", "10").to_i
+scan_pages = ENV.fetch("COVER_SCAN_PAGES", "25").to_i
+regenerate_covers = ActiveModel::Type::Boolean.new.cast(ENV.fetch("REGENERATE_COVERS", "false"))
 limit = ENV["LIMIT"]&.to_i
 
 if delete_mock
@@ -25,7 +26,11 @@ if delete_mock
 end
 
 if generate_covers
-  scope = Ebook.left_outer_joins(:cover_image_attachment).where(active_storage_attachments: { id: nil })
+  scope = if regenerate_covers
+    Ebook.all
+  else
+    Ebook.left_outer_joins(:cover_image_attachment).where(active_storage_attachments: { id: nil })
+  end
   scope = scope.limit(limit) if limit&.positive?
   puts "Generating covers for #{scope.count} ebooks without cover..."
 
@@ -40,6 +45,26 @@ if generate_covers
     end
     avg = image.avg
     avg > 250.0
+  end
+
+  def page_text_score(pdf_path, page)
+    out, _err, status = Open3.capture3("pdftotext", "-f", page.to_s, "-l", page.to_s, pdf_path, "-")
+    return 0 unless status.success?
+
+    text = out.gsub(/\s+/, " ").strip
+    len = text.length
+    return 0 if len < 10
+
+    # Prefer moderate-length text (title page) over huge text blocks.
+    base = [len, 2000].min / 200.0
+    bonus = if len.between?(20, 500)
+      2.0
+    elsif len.between?(501, 1200)
+      1.0
+    else
+      0.0
+    end
+    base + bonus
   end
 
   scope.find_each do |ebook|
@@ -61,6 +86,7 @@ if generate_covers
 
         Dir.mktmpdir("cover") do |dir|
           selected = nil
+          best_score = -1.0
           (1..scan_pages).each do |page|
             prefix = File.join(dir, "page-#{page}")
             png_path = "#{prefix}.png"
@@ -75,8 +101,21 @@ if generate_covers
               next
             end
 
-            selected = png_path
-            break
+            # Score by text + darkness to find title pages.
+            text_score = page_text_score(pdf_tmp.path, page)
+            image = Vips::Image.new_from_file(png_path, access: :sequential)
+            if image.width > 200
+              image = image.resize(200.0 / image.width)
+            end
+            darkness = (255.0 - image.avg) / 25.0
+            score = text_score + darkness
+
+            if score > best_score
+              best_score = score
+              selected = png_path
+            else
+              File.delete(png_path) if File.exist?(png_path)
+            end
           end
 
           if selected
