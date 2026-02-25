@@ -10,6 +10,11 @@ class CheckoutController < ApplicationController
       return
     end
 
+    if Stripe.api_key.blank?
+      redirect_to cart_path, alert: "Checkout is not configured yet. Please contact support."
+      return
+    end
+
     line_items = @ebooks.map do |ebook|
       {
         price_data: {
@@ -22,20 +27,26 @@ class CheckoutController < ApplicationController
     end
 
     ebook_ids = @ebooks.map(&:id).join(",")
+
+    begin
+      checkout_session = Stripe::Checkout::Session.create(
+        payment_method_types: ["card"],
+        line_items: line_items,
+        mode: "payment",
+        success_url: checkout_success_url + "?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: checkout_cancel_url,
+        metadata: {
+          user_id: current_user.id,
+          ebook_ids: ebook_ids
+        }
+      )
+    rescue Stripe::StripeError => e
+      Rails.logger.error("Stripe checkout session creation failed: #{e.class} - #{e.message}")
+      redirect_to cart_path, alert: "Unable to start checkout right now. Please try again."
+      return
+    end
+
     session[:cart] = {}
-
-    checkout_session = Stripe::Checkout::Session.create(
-      payment_method_types: ["card"],
-      line_items: line_items,
-      mode: "payment",
-      success_url: checkout_success_url + "?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: checkout_cancel_url,
-      metadata: {
-        user_id: current_user.id,
-        ebook_ids: ebook_ids
-      }
-    )
-
     redirect_to checkout_session.url, allow_other_host: true
   end
 
