@@ -4,7 +4,7 @@ class WebhooksController < ApplicationController
   def stripe
     payload = request.body.read
     sig_header = request.env["HTTP_STRIPE_SIGNATURE"]
-    endpoint_secret = Rails.application.credentials.dig(:stripe, :webhook_secret)
+    endpoint_secret = stripe_webhook_secret
 
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, endpoint_secret)
@@ -21,6 +21,22 @@ class WebhooksController < ApplicationController
   end
 
   private
+
+  def stripe_webhook_secret
+    creds = Rails.application.credentials
+    stripe_config = creds.respond_to?(:[]) ? (creds[:stripe] || creds["stripe"]) : nil
+
+    credential_secret =
+      if stripe_config.is_a?(String)
+        nil
+      elsif stripe_config.respond_to?(:[])
+        stripe_config[:webhook_secret] || stripe_config["webhook_secret"]
+      elsif creds.respond_to?(:[])
+        creds[:stripe_webhook_secret] || creds["stripe_webhook_secret"]
+      end
+
+    ENV["STRIPE_WEBHOOK_SECRET"].presence || credential_secret
+  end
 
   def handle_successful_payment(session)
     user = User.find_by(id: session["metadata"]["user_id"])
