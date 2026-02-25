@@ -10,5 +10,7 @@ credential_key =
     creds[:stripe_secret_key] || creds["stripe_secret_key"]
   end
 
-stripe_key = ENV["STRIPE_SECRET_KEY"].presence || credential_key
+stripe_key =
+  ENV["STRIPE_SECRET_KEY"].to_s.strip.presence ||
+  credential_key.to_s.strip.presence
 Stripe.api_key = stripe_key if stripe_key.present?
