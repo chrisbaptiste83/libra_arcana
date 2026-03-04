@@ -29,14 +29,6 @@
 
       <!-- Right side -->
       <div class="flex items-center gap-4">
-        <!-- Cart -->
-        <%= link_to cart_path, data: { turbo_prefetch: false }, class: "relative text-gray-300 hover:text-gold transition-colors" do %>
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          <% if cart_count > 0 %>
-            <span class="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center text-xs font-bold rounded-full bg-gold text-gray-950"><%= cart_count %></span>
-          <% end %>
-        <% end %>
-
         <% if user_signed_in? %>
           <div class="relative" data-controller="dropdown">
             <button data-action="click->dropdown#toggle" class="flex items-center gap-2 text-sm text-gray-300 hover:text-gold transition-colors">
@@ -46,11 +38,7 @@
               <span class="hidden sm:inline"><%= current_user.first_name %></span>
             </button>
             <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 w-48 rounded-lg border border-gray-800/50 bg-gray-900/95 backdrop-blur-md shadow-xl py-1 z-50">
-              <%= link_to "Dashboard", dashboard_path, class: "block px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" %>
-              <%= link_to "My Library", dashboard_library_path, class: "block px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" %>
-              <%= link_to "Order History", dashboard_orders_path, class: "block px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" %>
               <% if current_user.admin? %>
-                <div class="border-t border-gray-800/50 my-1"></div>
                 <%= link_to "Admin Panel", admin_dashboard_path, class: "block px-4 py-2 text-sm text-mystic-purple-light hover:bg-gray-800/50 transition-colors" %>
               <% end %>
               <div class="border-t border-gray-800/50 my-1"></div>

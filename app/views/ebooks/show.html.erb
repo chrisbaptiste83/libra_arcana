@@ -24,11 +24,15 @@
       <h1 class="font-heading text-3xl md:text-4xl font-bold text-gray-100 mb-2"><%= @ebook.title %></h1>
       <p class="text-lg text-gray-400 mb-6">by <%= @ebook.author %></p>
 
-      <div class="flex items-center gap-6 mb-8">
-        <span class="text-3xl font-bold text-gold"><%= @ebook.formatted_price %></span>
-        <%= button_to add_cart_path(ebook_id: @ebook.id), method: :post, class: "btn-gold text-base px-8 py-3" do %>
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          Add to Cart
+      <div class="flex flex-wrap items-center gap-4 mb-8">
+        <% if @ebook.ebook_file.attached? %>
+          <%= link_to "#reader", class: "btn-gold text-base px-8 py-3" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            Read Online
+          <% end %>
+          <%= link_to "Open in New Tab", rails_blob_path(@ebook.ebook_file, disposition: "inline"), target: "_blank", rel: "noopener", class: "btn-outline-gold text-base px-6 py-3" %>
+        <% else %>
+          <span class="text-sm text-gray-500">The reading file hasn't been uploaded yet.</span>
         <% end %>
       </div>
 
@@ -69,6 +73,23 @@
       </div>
     </div>
   </div>
+
+  <% if @ebook.ebook_file.attached? %>
+    <section id="reader" class="mt-12">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-heading text-2xl font-bold text-gray-200">Reader</h2>
+        <%= link_to "Open Fullscreen", rails_blob_path(@ebook.ebook_file, disposition: "inline"), target: "_blank", rel: "noopener", class: "text-sm text-gold hover:text-gold-light transition-colors" %>
+      </div>
+      <div class="card-dark overflow-hidden">
+        <iframe
+          title="<%= @ebook.title %> reader"
+          src="<%= rails_blob_path(@ebook.ebook_file, disposition: "inline") %>"
+          class="w-full h-[75vh] bg-gray-950"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </section>
+  <% end %>
 
   <!-- Related Ebooks -->
   <% if @related_ebooks.any? %>

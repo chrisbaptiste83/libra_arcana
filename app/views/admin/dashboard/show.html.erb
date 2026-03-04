@@ -3,76 +3,73 @@
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
   <div class="card-dark p-5 !transform-none">
-    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Revenue</p>
-    <p class="text-2xl font-bold text-gold">$<%= '%.2f' % @total_revenue %></p>
-    <p class="text-xs text-gray-600 mt-1">$<%= '%.2f' % @monthly_revenue %> this month</p>
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Ebooks</p>
+    <p class="text-2xl font-bold text-gray-200"><%= @total_ebooks %></p>
   </div>
   <div class="card-dark p-5 !transform-none">
-    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Orders</p>
-    <p class="text-2xl font-bold text-gray-200"><%= @total_orders %></p>
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Categories</p>
+    <p class="text-2xl font-bold text-gold"><%= @total_categories %></p>
+  </div>
+  <div class="card-dark p-5 !transform-none">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Featured</p>
+    <p class="text-2xl font-bold text-mystic-purple-light"><%= @featured_ebooks_count %></p>
   </div>
   <div class="card-dark p-5 !transform-none">
     <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Users</p>
-    <p class="text-2xl font-bold text-mystic-purple-light"><%= @total_users %></p>
-  </div>
-  <div class="card-dark p-5 !transform-none">
-    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Ebooks</p>
-    <p class="text-2xl font-bold text-gray-200"><%= @total_ebooks %></p>
+    <p class="text-2xl font-bold text-gray-200"><%= @total_users %></p>
   </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <!-- Recent Orders -->
+  <!-- Recent Ebooks -->
   <div class="card-dark overflow-hidden !transform-none">
     <div class="px-5 py-4 border-b border-gray-800/30">
-      <h2 class="font-heading text-lg font-semibold text-gray-200">Recent Orders</h2>
+      <h2 class="font-heading text-lg font-semibold text-gray-200">Recent Ebooks</h2>
     </div>
-    <% if @recent_orders.any? %>
+    <% if @recent_ebooks.any? %>
       <table class="table-dark">
         <thead>
           <tr>
-            <th>Order</th>
-            <th>User</th>
-            <th>Total</th>
-            <th>Date</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Added</th>
           </tr>
         </thead>
         <tbody>
-          <% @recent_orders.each do |order| %>
+          <% @recent_ebooks.each do |ebook| %>
             <tr>
-              <td><%= link_to "##{order.id}", admin_order_path(order), class: "text-gold hover:text-gold-light transition-colors" %></td>
-              <td class="text-gray-400 text-sm"><%= order.user.email %></td>
-              <td class="text-gold font-medium">$<%= '%.2f' % order.total %></td>
-              <td class="text-gray-500 text-sm"><%= order.created_at.strftime("%b %d") %></td>
+              <td><%= link_to ebook.title, admin_ebook_path(ebook), class: "text-gold hover:text-gold-light transition-colors" %></td>
+              <td class="text-gray-400 text-sm"><%= ebook.category&.name || "-" %></td>
+              <td class="text-gray-500 text-sm"><%= ebook.created_at.strftime("%b %d") %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     <% else %>
-      <p class="px-5 py-8 text-center text-gray-500 text-sm">No orders yet</p>
+      <p class="px-5 py-8 text-center text-gray-500 text-sm">No ebooks yet</p>
     <% end %>
   </div>
 
-  <!-- Top Ebooks -->
+  <!-- Popular Categories -->
   <div class="card-dark overflow-hidden !transform-none">
     <div class="px-5 py-4 border-b border-gray-800/30">
-      <h2 class="font-heading text-lg font-semibold text-gray-200">Top Selling Ebooks</h2>
+      <h2 class="font-heading text-lg font-semibold text-gray-200">Popular Categories</h2>
     </div>
-    <% if @top_ebooks.any? %>
+    <% if @popular_categories.any? %>
       <div class="divide-y divide-gray-800/30">
-        <% @top_ebooks.each_with_index do |ebook, i| %>
+        <% @popular_categories.each_with_index do |category, i| %>
           <div class="flex items-center gap-3 px-5 py-3">
             <span class="text-sm font-bold text-gray-600 w-6"><%= i + 1 %></span>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-200 truncate"><%= ebook.title %></p>
-              <p class="text-xs text-gray-500"><%= ebook.author %></p>
+              <p class="text-sm font-medium text-gray-200 truncate"><%= category.name %></p>
+              <p class="text-xs text-gray-500"><%= category.ebooks_count %> ebooks</p>
             </div>
-            <span class="badge-purple"><%= ebook.sales_count %> sold</span>
+            <%= link_to "View", admin_category_path(category), class: "text-xs text-gold hover:text-gold-light transition-colors" %>
           </div>
         <% end %>
       </div>
     <% else %>
-      <p class="px-5 py-8 text-center text-gray-500 text-sm">No sales yet</p>
+      <p class="px-5 py-8 text-center text-gray-500 text-sm">No categories yet</p>
     <% end %>
   </div>
 </div>

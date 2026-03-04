@@ -20,11 +20,7 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div>
-      <label class="block text-sm text-gray-400 mb-1">Price ($)</label>
-      <%= f.number_field :price, step: 0.01, min: 0.01, class: "input-dark" %>
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label class="block text-sm text-gray-400 mb-1">Category</label>
       <%= f.collection_select :category_id, Category.order(:name), :id, :name, { prompt: "Select category" }, class: "input-dark" %>
@@ -72,8 +68,8 @@
       <img data-image-preview-target="preview" class="mt-2 w-24 h-32 object-cover rounded hidden">
     </div>
     <div>
-      <label class="block text-sm text-gray-400 mb-1">Ebook File (PDF/EPUB)</label>
-      <%= f.file_field :ebook_file, accept: ".pdf,.epub", class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-mystic-purple/10 file:text-mystic-purple-light hover:file:bg-mystic-purple/20 cursor-pointer" %>
+      <label class="block text-sm text-gray-400 mb-1">Ebook File (PDF)</label>
+      <%= f.file_field :ebook_file, accept: ".pdf", class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-mystic-purple/10 file:text-mystic-purple-light hover:file:bg-mystic-purple/20 cursor-pointer" %>
       <% if ebook.ebook_file.attached? %>
         <p class="text-xs text-gray-500 mt-2">Current file: <%= ebook.ebook_file.filename %></p>
       <% end %>

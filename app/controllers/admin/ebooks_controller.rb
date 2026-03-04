@@ -49,7 +49,7 @@ class Admin::EbooksController < Admin::BaseController
 
   def ebook_params
     params.require(:ebook).permit(
-      :title, :author, :price, :description, :page_count,
+      :title, :author, :description, :page_count,
       :isbn, :language, :publication_year, :featured,
       :category_id, :cover_image, :ebook_file
     )

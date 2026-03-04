@@ -21,7 +21,6 @@ gem "image_processing", "~> 1.2"
 gem "devise", "~> 4.9"
 
 # Payments
-gem "stripe"
 
 # Pagination
 gem "pagy", "~> 9.0"

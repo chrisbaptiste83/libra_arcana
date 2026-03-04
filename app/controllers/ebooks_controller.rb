@@ -5,14 +5,12 @@ class EbooksController < ApplicationController
     ebooks = ebooks.by_category(params[:category_id]) if params[:category_id].present?
 
     ebooks = case params[:sort]
-    when "price_asc"
-      ebooks.order(price: :asc)
-    when "price_desc"
-      ebooks.order(price: :desc)
     when "title"
       ebooks.order(title: :asc)
     when "newest"
       ebooks.order(created_at: :desc)
+    when "oldest"
+      ebooks.order(created_at: :asc)
     else
       ebooks.order(created_at: :desc)
     end

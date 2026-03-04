@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
   <div class="mb-8">
     <h1 class="font-heading text-3xl md:text-4xl font-bold gradient-gold-text mb-2">Ebook Catalog</h1>
-    <p class="text-gray-500">Discover your next mystical read</p>
+    <p class="text-gray-500">Browse and read the public library</p>
   </div>
 
   <div class="flex flex-col lg:flex-row gap-8">
@@ -32,10 +32,9 @@
           <div class="mb-5">
             <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Sort By</label>
             <select name="sort" class="input-dark text-sm" onchange="this.form.requestSubmit()">
-              <option value="newest" <%= "selected" if params[:sort] == "newest" %>>Newest</option>
+              <option value="newest" <%= "selected" if params[:sort].blank? || params[:sort] == "newest" %>>Newest</option>
               <option value="title" <%= "selected" if params[:sort] == "title" %>>Title A-Z</option>
-              <option value="price_asc" <%= "selected" if params[:sort] == "price_asc" %>>Price: Low to High</option>
-              <option value="price_desc" <%= "selected" if params[:sort] == "price_desc" %>>Price: High to Low</option>
+              <option value="oldest" <%= "selected" if params[:sort] == "oldest" %>>Oldest</option>
             </select>
           </div>
 

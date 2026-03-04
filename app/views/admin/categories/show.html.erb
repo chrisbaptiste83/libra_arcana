@@ -41,7 +41,6 @@
         <tr>
           <th>Title</th>
           <th>Author</th>
-          <th>Price</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -50,7 +49,6 @@
           <tr>
             <td class="text-gray-200 text-sm"><%= ebook.title %></td>
             <td class="text-gray-400 text-sm"><%= ebook.author %></td>
-            <td class="text-gold"><%= ebook.formatted_price %></td>
             <td><%= link_to "View", admin_ebook_path(ebook), class: "text-sm text-gold hover:text-gold-light transition-colors" %></td>
           </tr>
         <% end %>

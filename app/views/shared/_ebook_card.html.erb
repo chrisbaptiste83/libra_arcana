@@ -10,10 +10,10 @@
     <% end %>
     <p class="text-sm text-gray-500 mb-3"><%= ebook.author %></p>
     <div class="flex items-center justify-between">
-      <span class="text-lg font-semibold text-gold"><%= ebook.formatted_price %></span>
-      <%= button_to add_cart_path(ebook_id: ebook.id), method: :post, class: "btn-gold text-xs !py-1.5 !px-3" do %>
-        Add to Cart
-      <% end %>
+      <span class="text-xs text-gray-500">
+        <%= ebook.ebook_file.attached? ? "Ready to read" : "File coming soon" %>
+      </span>
+      <%= link_to "Read", ebook_path(ebook), class: "btn-gold text-xs !py-1.5 !px-3" %>
     </div>
   </div>
 </div>
