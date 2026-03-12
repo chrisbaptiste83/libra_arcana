@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "reading-list-btn-#{@ebook.id}" do %>
+  <%= render "shared/reading_list_button", ebook: @ebook, item: nil %>
+<% end %>

@@ -1,0 +1,51 @@
+<div id="reading-list-btn-<%= ebook.id %>" class="relative" data-controller="dropdown">
+  <% if user_signed_in? %>
+    <% if item %>
+      <button data-action="click->dropdown#toggle"
+              class="flex items-center gap-1.5 text-sm text-mystic-purple-light hover:text-mystic-purple transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        <span class="hidden sm:inline"><%= item.status_label %></span>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div data-dropdown-target="menu" class="hidden absolute left-0 top-full mt-1 w-44 rounded-lg border border-gray-800/50 bg-gray-900/95 backdrop-blur-md shadow-xl py-1 z-50">
+        <% ReadingListItem::STATUSES.each do |status| %>
+          <% if status != item.status %>
+            <%= button_to reading_list_item_path(item),
+                  params: { reading_list_item: { status: status } },
+                  method: :patch,
+                  class: "w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" do %>
+              <%= status.humanize %>
+            <% end %>
+          <% end %>
+        <% end %>
+        <div class="border-t border-gray-800/50 my-1"></div>
+        <%= button_to reading_list_item_path(item), method: :delete,
+              class: "w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-800/50 transition-colors" do %>
+          Remove
+        <% end %>
+      </div>
+    <% else %>
+      <button data-action="click->dropdown#toggle"
+              class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-mystic-purple-light transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        <span class="hidden sm:inline">Reading List</span>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div data-dropdown-target="menu" class="hidden absolute left-0 top-full mt-1 w-44 rounded-lg border border-gray-800/50 bg-gray-900/95 backdrop-blur-md shadow-xl py-1 z-50">
+        <% ReadingListItem::STATUSES.each do |status| %>
+          <%= button_to reading_list_items_path,
+                params: { ebook_id: ebook.id, status: status },
+                class: "w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" do %>
+            <%= status.humanize %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <%= link_to new_user_session_path,
+          class: "flex items-center gap-1.5 text-sm text-gray-400 hover:text-mystic-purple-light transition-colors" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+      <span class="hidden sm:inline">Reading List</span>
+    <% end %>
+  <% end %>
+</div>

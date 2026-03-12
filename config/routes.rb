@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   resources :ebooks, only: [:index, :show]
   resources :categories, only: [:show], param: :slug
 
+  # User library features
+  resources :favorites, only: [:create, :destroy]
+  resources :reading_list_items, only: [:create, :update, :destroy]
+  get "profile", to: "profiles#show", as: :profile
+
   # Static pages
   get "about", to: "pages#about"
   get "contact", to: "pages#contact"

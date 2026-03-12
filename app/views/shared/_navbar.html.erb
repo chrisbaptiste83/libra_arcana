@@ -38,6 +38,7 @@
               <span class="hidden sm:inline"><%= current_user.first_name %></span>
             </button>
             <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 w-48 rounded-lg border border-gray-800/50 bg-gray-900/95 backdrop-blur-md shadow-xl py-1 z-50">
+              <%= link_to "My Profile", profile_path, class: "block px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" %>
               <% if current_user.admin? %>
                 <%= link_to "Admin Panel", admin_dashboard_path, class: "block px-4 py-2 text-sm text-mystic-purple-light hover:bg-gray-800/50 transition-colors" %>
               <% end %>

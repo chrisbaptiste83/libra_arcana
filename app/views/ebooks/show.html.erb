@@ -34,6 +34,15 @@
         <% else %>
           <span class="text-sm text-gray-500">The reading file hasn't been uploaded yet.</span>
         <% end %>
+
+        <div class="flex items-center gap-4 ml-auto">
+          <%= render "shared/favorite_button",
+                ebook: @ebook,
+                favorite: user_signed_in? ? current_user.favorites.find_by(ebook: @ebook) : nil %>
+          <%= render "shared/reading_list_button",
+                ebook: @ebook,
+                item: user_signed_in? ? current_user.reading_list_item_for(@ebook) : nil %>
+        </div>
       </div>
 
       <!-- Description -->

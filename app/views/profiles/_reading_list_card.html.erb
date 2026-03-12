@@ -1,0 +1,23 @@
+<div class="card-dark overflow-hidden flex gap-4 p-4 !transform-none">
+  <div class="flex-1 min-w-0">
+    <% if item.ebook.category %>
+      <p class="text-xs text-mystic-purple-light mb-1"><%= item.ebook.category.name %></p>
+    <% end %>
+    <%= link_to ebook_path(item.ebook), class: "block group/title" do %>
+      <h3 class="font-heading text-base font-semibold text-gray-100 group-hover/title:text-gold transition-colors leading-tight mb-0.5 truncate"><%= item.ebook.title %></h3>
+    <% end %>
+    <p class="text-sm text-gray-500 mb-3 truncate"><%= item.ebook.author %></p>
+
+    <div class="flex items-center justify-between">
+      <% status_classes = {
+        "currently_reading" => "text-gold",
+        "want_to_read" => "text-mystic-purple-light",
+        "completed" => "text-green-500"
+      } %>
+      <span class="text-xs <%= status_classes[item.status] || 'text-gray-400' %>">
+        <%= item.status_label %>
+      </span>
+      <%= render "shared/reading_list_button", ebook: item.ebook, item: item %>
+    </div>
+  </div>
+</div>
