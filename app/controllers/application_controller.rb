@@ -2,7 +2,13 @@ class ApplicationController < ActionController::Base
   include Pagy::Backend
   allow_browser versions: :modern
 
+  before_action :set_nav_categories
+
   private
+
+  def set_nav_categories
+    @nav_categories = Category.joins(:ebooks).distinct.order(:name)
+  end
 
   def require_admin!
     unless current_user&.admin?

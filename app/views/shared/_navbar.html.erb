@@ -18,7 +18,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div data-dropdown-target="menu" class="hidden absolute top-full left-0 mt-2 w-48 rounded-lg border border-gray-800/50 bg-gray-900/95 backdrop-blur-md shadow-xl py-1 z-50">
-            <% Category.order(:name).each do |category| %>
+            <% @nav_categories.each do |category| %>
               <%= link_to category.name, category_path(slug: category.slug), class: "block px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gray-800/50 transition-colors" %>
             <% end %>
           </div>
@@ -68,7 +68,7 @@
       <%= link_to "Contact", contact_path, class: "block py-2 text-gray-300 hover:text-gold transition-colors" %>
       <div class="border-t border-gray-800/50 pt-2 mt-2">
         <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">Categories</p>
-        <% Category.order(:name).each do |category| %>
+        <% @nav_categories.each do |category| %>
           <%= link_to category.name, category_path(slug: category.slug), class: "block py-1.5 text-sm text-gray-400 hover:text-gold transition-colors" %>
         <% end %>
       </div>

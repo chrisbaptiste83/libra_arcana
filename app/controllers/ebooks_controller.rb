@@ -16,7 +16,7 @@ class EbooksController < ApplicationController
     end
 
     @pagy, @ebooks = pagy(ebooks)
-    @categories = Category.order(:name)
+    @categories = Category.joins(:ebooks).distinct.order(:name)
   end
 
   def show
