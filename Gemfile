@@ -24,7 +24,7 @@ gem "devise", "~> 5.0"
 # Payments
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.0"
 
 # AI descriptions
 gem "anthropic"

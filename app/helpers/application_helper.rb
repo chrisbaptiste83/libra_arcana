@@ -1,6 +1,4 @@
 module ApplicationHelper
-  include Pagy::Frontend
-
   def category_icon_svg(icon_name)
     path = case icon_name
     when "star"
@@ -30,8 +28,8 @@ module ApplicationHelper
 
     html = +%(<nav class="flex justify-center mt-8"><div class="flex items-center gap-2">)
 
-    if pagy.prev
-      html << link_to(raw("&laquo; Prev"), url_for(page: pagy.prev), class: "px-3 py-2 text-sm rounded-lg border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-colors")
+    if pagy.previous
+      html << link_to(raw("&laquo; Prev"), url_for(page: pagy.previous), class: "px-3 py-2 text-sm rounded-lg border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-colors")
     end
 
     pagy.series.each do |item|
