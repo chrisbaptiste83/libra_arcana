@@ -32,7 +32,7 @@ module ApplicationHelper
       html << link_to(raw("&laquo; Prev"), url_for(page: pagy.previous), class: "px-3 py-2 text-sm rounded-lg border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-colors")
     end
 
-    pagy.series.each do |item|
+    pagy.send(:series).each do |item|
       case item
       when Integer
         html << link_to(item.to_s, url_for(page: item), class: "px-3 py-2 text-sm rounded-lg border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-colors")
