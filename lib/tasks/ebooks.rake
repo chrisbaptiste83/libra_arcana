@@ -276,6 +276,25 @@ namespace :ebooks do
             content_type: content_type
           )
 
+          # Generate cover: render pages 1–5, pick the one with the most visual content
+          if obj.key.match?(/\.pdf\z/i) && !ebook.cover_image.attached?
+            cover_prefix = File.join(tmpdir, "cover")
+            if system("pdftoppm", "-png", "-r", "150", "-f", "1", "-l", "5",
+                       local_path, cover_prefix, out: File::NULL, err: File::NULL)
+              candidates = Dir.glob("#{cover_prefix}*.png").sort
+              best = candidates.max_by { |f| File.size(f) }
+              if best
+                ebook.cover_image.attach(
+                  io: File.open(best, "rb"),
+                  filename: "cover_#{ebook.id}.png",
+                  content_type: "image/png"
+                )
+                page_num = File.basename(best, ".png").scan(/\d+/).last.to_i
+                puts "    COVER: page #{page_num} of #{candidates.size}"
+              end
+            end
+          end
+
           move_s3_object(s3, bucket_name, obj.key, processed_key)
           created += 1
           moved += 1
@@ -288,6 +307,62 @@ namespace :ebooks do
     end
 
     puts "Done. imported=#{created} skipped=#{skipped} moved=#{moved} errors=#{errors}"
+  end
+
+  desc "Generate cover images for ebooks (renders best of first 5 pages). FORCE=true to regenerate existing."
+  task generate_covers: :environment do
+    require "tmpdir"
+
+    force = ActiveModel::Type::Boolean.new.cast(ENV.fetch("FORCE", "false"))
+
+    ebooks = Ebook.includes(:ebook_file_attachment, :ebook_file_blob, :cover_image_attachment).all.select do |e|
+      e.ebook_file.attached? &&
+        (force || !e.cover_image.attached?) &&
+        (e.ebook_file.blob.content_type == "application/pdf" ||
+          e.ebook_file.blob.filename.extension_without_delimiter&.downcase == "pdf")
+    end
+
+    puts "Generating covers for #{ebooks.size} ebook(s)#{force ? ' [FORCE — replacing existing]' : ''}..."
+
+    ebooks.each do |ebook|
+      puts "  [#{ebook.id}] #{ebook.title}"
+      Dir.mktmpdir do |tmpdir|
+        pdf_path     = File.join(tmpdir, "ebook.pdf")
+        cover_prefix = File.join(tmpdir, "cover")
+
+        File.open(pdf_path, "wb") { |f| ebook.ebook_file.download { |chunk| f.write(chunk) } }
+
+        # Render pages 1–5 at 150 DPI, then pick the one with the most visual content.
+        # Largest PNG file size = most ink on the page, which reliably picks a title or
+        # content page over blank/nearly-blank opening pages.
+        unless system("pdftoppm", "-png", "-r", "150", "-f", "1", "-l", "5",
+                      pdf_path, cover_prefix, out: File::NULL, err: File::NULL)
+          puts "    [WARN] pdftoppm failed"
+          next
+        end
+
+        candidates = Dir.glob("#{cover_prefix}*.png").sort
+        if candidates.empty?
+          puts "    [WARN] no pages produced"
+          next
+        end
+
+        best = candidates.max_by { |f| File.size(f) }
+        page_num = File.basename(best, ".png").scan(/\d+/).last.to_i
+
+        ebook.cover_image.purge if force && ebook.cover_image.attached?
+        ebook.cover_image.attach(
+          io: File.open(best, "rb"),
+          filename: "cover_#{ebook.id}.png",
+          content_type: "image/png"
+        )
+        puts "    OK (used page #{page_num} of #{candidates.size} rendered, #{(File.size(best) / 1024.0).round}KB)"
+      end
+    rescue => e
+      puts "    [ERROR] #{e.class}: #{e.message}"
+    end
+
+    puts "Done."
   end
 
   desc "Full pipeline: organize bucket -> import from S3 -> generate AI descriptions"

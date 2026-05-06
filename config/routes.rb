@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   # Admin
   namespace :admin do
     get "/", to: "dashboard#show", as: :dashboard
+    get "pipeline", to: "pipeline#show", as: :pipeline
     resources :ebooks
     resources :categories
     resources :users, only: [:index, :show]
