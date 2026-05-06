@@ -35,6 +35,8 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
+/coverage
+/.codex
 
 # Ignore CI service files.
 /.github

@@ -38,5 +38,9 @@
 
 /node_modules
 
+/coverage/
+/.codex
+/.codex/
+
 .kamal/secrets
 .DS_Store

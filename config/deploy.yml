@@ -93,6 +93,7 @@ builder:
 
 accessories:
   postgres:
+    service: libra-arcana-postgres
     image: postgres:16
     host: 172.236.243.75
     env:

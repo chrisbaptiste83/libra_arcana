@@ -11,7 +11,8 @@ amazon_prod:
   access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
   region: <%= Rails.application.credentials.dig(:aws, :region) %>
-  bucket: occult-ebooks-667
+  bucket: libra-arcana-dev-assets
+  upload: { acl: "private" }
 
 amazon_prod_ff:
   service: S3

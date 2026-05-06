@@ -6,9 +6,6 @@ require "marcel"
 require "open3"
 
 import_dir = ENV.fetch("IMPORT_DIR", "/tmp/ebooks_import")
-price_base = ENV.fetch("IMPORT_PRICE_BASE", "9.99").to_f
-price_per_10mb = ENV.fetch("IMPORT_PRICE_PER_10MB", "1.0").to_f
-price_cap = ENV.fetch("IMPORT_PRICE_CAP", "29.99").to_f
 author_default = ENV.fetch("IMPORT_AUTHOR_DEFAULT", "Unknown")
 featured_default = ActiveModel::Type::Boolean.new.cast(ENV.fetch("IMPORT_FEATURED", "false"))
 dry_run = ActiveModel::Type::Boolean.new.cast(ENV.fetch("IMPORT_DRY_RUN", "false"))
@@ -16,13 +13,6 @@ dry_run = ActiveModel::Type::Boolean.new.cast(ENV.fetch("IMPORT_DRY_RUN", "false
 unless Dir.exist?(import_dir)
   warn "Import dir not found: #{import_dir}"
   exit 1
-end
-
-def price_for_bytes(bytes, base:, per_10mb:, cap:)
-  size_mb = bytes.to_f / (1024 * 1024)
-  increments = (size_mb / 10.0).ceil
-  price = base + (increments * per_10mb)
-  [price, cap].min.round(2)
 end
 
 def pdf_author(path)
@@ -59,12 +49,10 @@ paths.each do |path|
     next
   end
 
-  bytes = File.size(path)
-  price = price_for_bytes(bytes, base: price_base, per_10mb: price_per_10mb, cap: price_cap)
-  description = "Imported from S3. Category: #{category.name}."
+  description = "Imported from local dir. Category: #{category.name}."
 
   if dry_run
-    puts "DRY RUN: #{title} (#{category.name}) $#{price} from #{rel}"
+    puts "DRY RUN: #{title} (#{category.name}) from #{rel}"
     next
   end
 
@@ -73,7 +61,6 @@ paths.each do |path|
     ebook ||= Ebook.new(
       title: title,
       author: author,
-      price: price,
       description: description,
       featured: featured_default,
       category: category
@@ -89,7 +76,7 @@ paths.each do |path|
     )
     attached += 1
     created += 1 if ebook.previous_changes.key?("id")
-    puts "IMPORTED: #{title} (#{category.name}) $#{price} from #{rel}"
+    puts "IMPORTED: #{title} (#{category.name}) from #{rel}"
   rescue => e
     errors += 1
     warn "ERROR: #{title} (#{category.name}) - #{e.class}: #{e.message}"

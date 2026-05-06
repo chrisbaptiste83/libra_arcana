@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'cgi'
 
 RSpec.describe "Ebooks", type: :request do
   let!(:category) { create(:category) }
@@ -12,7 +13,7 @@ RSpec.describe "Ebooks", type: :request do
 
     it "displays ebooks" do
       get ebooks_path
-      expect(response.body).to include(ebook.title)
+      expect(response.body).to include(CGI.escapeHTML(ebook.title))
     end
 
     it "filters by search query" do
@@ -26,8 +27,8 @@ RSpec.describe "Ebooks", type: :request do
       other_cat   = create(:category)
       other_ebook = create(:ebook, category: other_cat)
       get ebooks_path, params: { category_id: category.id }
-      expect(response.body).to include(ebook.title)
-      expect(response.body).not_to include(other_ebook.title)
+      expect(response.body).to include(CGI.escapeHTML(ebook.title))
+      expect(response.body).not_to include(CGI.escapeHTML(other_ebook.title))
     end
   end
 

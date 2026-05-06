@@ -116,7 +116,23 @@ Requires `pdftoppm` (from `poppler-utils`) and a valid `ANTHROPIC_API_KEY`:
 bin/rails ebooks:generate_descriptions
 ```
 
-This renders the first three pages of each uploaded PDF and sends them to Claude to generate a contextual description.
+This renders the first ten pages of each uploaded PDF and sends them to Claude to generate a contextual description.
+
+## Ebook S3 Import Pipeline
+
+The S3 pipeline organizes loose ebook files, imports everything under `ebooks/raw/`, moves successful imports to `ebooks/processed/`, then generates AI descriptions for PDF attachments:
+
+```bash
+EBOOKS_S3_BUCKET=libra-arcana-dev-assets bin/rails ebooks:full_pipeline
+```
+
+Useful individual steps:
+
+```bash
+bin/rails ebooks:organize_s3_bucket[libra-arcana-dev-assets]
+IMPORT_DRY_RUN=true bin/rails ebooks:import_from_s3[libra-arcana-dev-assets]
+bin/rails ebooks:generate_descriptions
+```
 
 ## Deployment
 
