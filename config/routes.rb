@@ -2,12 +2,12 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations" }
 
   # Catalog
-  resources :ebooks, only: [:index, :show]
-  resources :categories, only: [:show], param: :slug
+  resources :ebooks, only: [ :index, :show ]
+  resources :categories, only: [ :show ], param: :slug
 
   # User library features
-  resources :favorites, only: [:create, :destroy]
-  resources :reading_list_items, only: [:create, :update, :destroy]
+  resources :favorites, only: [ :create, :destroy ]
+  resources :reading_list_items, only: [ :create, :update, :destroy ]
   get "profile", to: "profiles#show", as: :profile
 
   # Static pages
@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     get "pipeline", to: "pipeline#show", as: :pipeline
     resources :ebooks
     resources :categories
-    resources :users, only: [:index, :show]
+    resources :users, only: [ :index, :show ]
   end
 
   # Health check

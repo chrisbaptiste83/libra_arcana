@@ -1,5 +1,5 @@
 class Admin::EbooksController < Admin::BaseController
-  before_action :set_ebook, only: [:show, :edit, :update, :destroy]
+  before_action :set_ebook, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @pagy, @ebooks = pagy(Ebook.includes(:category).order(created_at: :desc))
