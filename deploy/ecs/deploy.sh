@@ -33,15 +33,29 @@ echo "==> Pushing image"
 docker push "${FULL_IMAGE}"
 
 echo "==> Registering new task definition revision"
-RENDERED=$(sed \
-  -e "s|<ACCOUNT_ID>|${AWS_ACCOUNT_ID}|g" \
-  -e "s|<REGION>|${AWS_REGION}|g" \
-  -e "s|<IMAGE_TAG>|${IMAGE_TAG}|g" \
-  "${TASK_DEF_FILE}")
+# Base the new revision on the current running task def so credentials stay in
+# ECS and never need to be in source. Just swap the app container's image.
+CURRENT_TASK_DEF_ARN=$(aws ecs describe-services \
+  --cluster "${ECS_CLUSTER}" \
+  --services "${ECS_SERVICE}" \
+  --region "${AWS_REGION}" \
+  --query "services[0].taskDefinition" \
+  --output text)
+
+CURRENT_TASK_DEF=$(aws ecs describe-task-definition \
+  --task-definition "${CURRENT_TASK_DEF_ARN}" \
+  --region "${AWS_REGION}" \
+  --query "taskDefinition" \
+  --output json)
+
+NEW_TASK_DEF_JSON=$(echo "${CURRENT_TASK_DEF}" \
+  | jq --arg IMAGE "${FULL_IMAGE}" \
+      'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)
+       | (.containerDefinitions[] | select(.name=="libra_arcana") | .image) |= $IMAGE')
 
 NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
   --region "${AWS_REGION}" \
-  --cli-input-json "${RENDERED}" \
+  --cli-input-json "${NEW_TASK_DEF_JSON}" \
   --query "taskDefinition.taskDefinitionArn" \
   --output text)
 
