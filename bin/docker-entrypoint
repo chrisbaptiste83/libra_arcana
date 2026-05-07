@@ -8,7 +8,7 @@ fi
 
 # If running the rails server then create or migrate existing database
 if echo "$@" | grep -q "rails server"; then
-  until ./bin/rails runner "ActiveRecord::Base.connection" 2>/dev/null; do
+  until ./bin/rails runner "ActiveRecord::Base.connection.execute('SELECT 1')" 2>/dev/null; do
     echo "Waiting for database..."
     sleep 2
   done
