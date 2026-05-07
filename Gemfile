@@ -45,3 +45,5 @@ end
 group :development do
   gem "web-console"
 end
+
+gem "thruster", "~> 0.1.20"
