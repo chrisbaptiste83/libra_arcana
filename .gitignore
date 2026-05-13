@@ -38,8 +38,9 @@
 
 /node_modules
 
-# Ignore local development artifacts.
-/.ruby-lsp
+/coverage/
 /.codex
-/coverage
+/.codex/
+
+.kamal/secrets
 .DS_Store

@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 8.1.2"
 gem "propshaft"
-gem "sqlite3", ">= 2.1"
+gem "pg", "~> 1.5"
 gem "puma", ">= 5.0"
 gem "jsbundling-rails"
 gem "turbo-rails"
@@ -13,8 +13,6 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 gem "bootsnap", require: false
-gem "kamal", require: false
-gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 gem "aws-sdk-s3", require: false
 
@@ -24,7 +22,7 @@ gem "devise", "~> 5.0"
 # Payments
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.5"
 
 # AI descriptions
 gem "anthropic"
@@ -40,7 +38,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "shoulda-matchers", "~> 6.0"
+  gem "shoulda-matchers", "~> 7.0"
   gem "simplecov", require: false
 end
 
@@ -48,3 +46,5 @@ group :development do
   gem "web-console"
   gem "erb-formatter", require: false
 end
+
+gem "thruster", "~> 0.1.20"

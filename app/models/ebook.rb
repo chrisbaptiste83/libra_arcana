@@ -15,8 +15,13 @@ class Ebook < ApplicationRecord
   scope :featured, -> { where(featured: true) }
   scope :by_category, ->(category_id) { where(category_id: category_id) if category_id.present? }
   scope :search, ->(query) {
-    where("title LIKE ? OR author LIKE ? OR description LIKE ?",
-          "%#{query}%", "%#{query}%", "%#{query}%") if query.present?
-  }
+    if query.present?
+      normalized_query = "%#{sanitize_sql_like(query.downcase)}%"
 
+      where(
+        "LOWER(title) LIKE :query OR LOWER(author) LIKE :query OR LOWER(description) LIKE :query",
+        query: normalized_query
+      )
+    end
+  }
 end

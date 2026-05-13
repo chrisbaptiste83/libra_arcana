@@ -1,0 +1,86 @@
+{
+  "family": "libra_arcana",
+  "requiresCompatibilities": ["EC2"],
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/service-role/ecsTaskExecutionRole",
+  "volumes": [
+    {
+      "name": "postgres-data",
+      "host": { "sourcePath": "/data/libra_arcana/postgres" }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "postgres",
+      "image": "postgres:16",
+      "essential": true,
+      "environment": [
+        { "name": "POSTGRES_USER",     "value": "rails" },
+        { "name": "POSTGRES_DB",       "value": "libra_arcana_production" },
+        { "name": "POSTGRES_PASSWORD", "value": "<your-db-password>" }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "postgres-data",
+          "containerPath": "/var/lib/postgresql/data",
+          "readOnly": false
+        }
+      ],
+      "portMappings": [
+        { "containerPort": 5432, "protocol": "tcp" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/libra_arcana",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "postgres",
+          "awslogs-create-group": "true"
+        }
+      },
+      "memory": 256,
+      "cpu": 128
+    },
+    {
+      "name": "libra_arcana",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/libra_arcana:<IMAGE_TAG>",
+      "essential": true,
+      "dependsOn": [
+        { "containerName": "postgres", "condition": "START" }
+      ],
+      "portMappings": [
+        { "containerPort": 80, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "RAILS_ENV",           "value": "production" },
+        { "name": "SOLID_QUEUE_IN_PUMA", "value": "true" },
+        { "name": "APP_HOST",            "value": "libra-arcana.online" },
+        { "name": "APP_PROTOCOL",        "value": "https" },
+        { "name": "EBOOKS_S3_BUCKET",    "value": "libra-arcana-dev-assets" },
+        { "name": "AWS_REGION",          "value": "<REGION>" },
+        { "name": "RAILS_MASTER_KEY",    "value": "<from config/master.key>" },
+        { "name": "DATABASE_URL",        "value": "postgres://rails:<your-db-password>@localhost:5432/libra_arcana_production" },
+        { "name": "ANTHROPIC_API_KEY",   "value": "<sk-ant-...>" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/libra_arcana",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "web",
+          "awslogs-create-group": "true"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -sf http://localhost:80/up || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "memory": 768,
+      "memoryReservation": 512,
+      "cpu": 256
+    }
+  ]
+}

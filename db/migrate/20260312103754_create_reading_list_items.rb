@@ -9,6 +9,6 @@ class CreateReadingListItems < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :reading_list_items, [:user_id, :ebook_id], unique: true
+    add_index :reading_list_items, [ :user_id, :ebook_id ], unique: true
   end
 end

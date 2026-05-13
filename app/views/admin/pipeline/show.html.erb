@@ -1,0 +1,238 @@
+<%# Auto-refresh every 10 seconds while covers are still being generated %>
+<% if @stats[:without_cover] > 0 %>
+  <meta http-equiv="refresh" content="10">
+<% end %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-heading text-2xl font-bold gradient-gold-text">Pipeline Status</h1>
+  <% if @stats[:without_cover] > 0 %>
+    <span class="flex items-center gap-2 text-sm text-amber-400">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+      </span>
+      Generating covers&hellip; refreshing every 10s
+    </span>
+  <% else %>
+    <span class="flex items-center gap-2 text-sm text-emerald-400">
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+      All covers generated
+    </span>
+  <% end %>
+</div>
+
+<!-- Overall Stats -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+  <div class="card-dark p-5 !transform-none col-span-2 sm:col-span-3 lg:col-span-1">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Ebooks</p>
+    <p class="text-2xl font-bold text-gray-200"><%= @stats[:total] %></p>
+  </div>
+
+  <div class="card-dark p-5 !transform-none">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">With File</p>
+    <p class="text-2xl font-bold text-emerald-400"><%= @stats[:with_file] %></p>
+    <p class="text-xs text-gray-600 mt-1">
+      <%= @stats[:total].zero? ? "—" : "#{(@stats[:with_file] * 100.0 / @stats[:total]).round}%" %>
+    </p>
+  </div>
+
+  <div class="card-dark p-5 !transform-none">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Missing File</p>
+    <p class="text-2xl font-bold <%= @stats[:without_file].zero? ? 'text-gray-600' : 'text-amber-400' %>">
+      <%= @stats[:without_file] %>
+    </p>
+  </div>
+
+  <div class="card-dark p-5 !transform-none">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">With Cover</p>
+    <p class="text-2xl font-bold text-emerald-400"><%= @stats[:with_cover] %></p>
+    <p class="text-xs text-gray-600 mt-1">
+      <%= @stats[:total].zero? ? "—" : "#{(@stats[:with_cover] * 100.0 / @stats[:total]).round}%" %>
+    </p>
+  </div>
+
+  <div class="card-dark p-5 !transform-none">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Missing Cover</p>
+    <p class="text-2xl font-bold <%= @stats[:without_cover].zero? ? 'text-gray-600' : 'text-amber-400' %>">
+      <%= @stats[:without_cover] %>
+    </p>
+  </div>
+
+  <div class="card-dark p-5 !transform-none">
+    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">AI Description</p>
+    <p class="text-2xl font-bold text-emerald-400"><%= @stats[:with_desc] %></p>
+    <p class="text-xs text-gray-600 mt-1">
+      <%= @stats[:total].zero? ? "—" : "#{(@stats[:with_desc] * 100.0 / @stats[:total]).round}%" %>
+    </p>
+  </div>
+</div>
+
+<!-- Progress Bars -->
+<div class="card-dark p-6 !transform-none mb-8">
+  <h2 class="font-heading text-lg font-semibold text-gray-200 mb-5">Coverage</h2>
+  <div class="space-y-4">
+    <% [
+      { label: "Ebook File", value: @stats[:with_file], total: @stats[:total], color: "bg-emerald-500" },
+      { label: "Cover Image", value: @stats[:with_cover], total: @stats[:total], color: "bg-gold" },
+      { label: "AI Description", value: @stats[:with_desc], total: @stats[:total], color: "bg-mystic-purple-light" }
+    ].each do |bar| %>
+      <% pct = bar[:total].zero? ? 0 : (bar[:value] * 100.0 / bar[:total]).round(1) %>
+      <div>
+        <div class="flex justify-between text-sm mb-1">
+          <span class="text-gray-400"><%= bar[:label] %></span>
+          <span class="text-gray-500"><%= bar[:value] %> / <%= bar[:total] %> (<%= pct %>%)</span>
+        </div>
+        <div class="w-full bg-gray-800 rounded-full h-2.5">
+          <div class="<%= bar[:color] %> h-2.5 rounded-full transition-all" style="width: <%= pct %>%"></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Run Commands -->
+<div class="card-dark p-6 !transform-none mb-8">
+  <h2 class="font-heading text-lg font-semibold text-gray-200 mb-4">Run Pipeline</h2>
+  <p class="text-sm text-gray-500 mb-4">Run these rake tasks to fill in missing data. They are safe to re-run — already-processed ebooks are skipped.</p>
+  <div class="space-y-3">
+    <div class="bg-gray-950 rounded-lg px-4 py-3 font-mono text-sm">
+      <p class="text-gray-500 text-xs mb-1"># Generate cover images for ebooks missing one</p>
+      <p class="text-emerald-400">bin/rails ebooks:generate_covers</p>
+    </div>
+    <div class="bg-gray-950 rounded-lg px-4 py-3 font-mono text-sm">
+      <p class="text-gray-500 text-xs mb-1"># Generate AI descriptions via Claude (requires ANTHROPIC_API_KEY)</p>
+      <p class="text-emerald-400">bin/rails ebooks:generate_descriptions</p>
+    </div>
+    <div class="bg-gray-950 rounded-lg px-4 py-3 font-mono text-sm">
+      <p class="text-gray-500 text-xs mb-1"># Import new ebooks from S3 (includes cover generation)</p>
+      <p class="text-emerald-400">bin/rails ebooks:import_from_s3</p>
+    </div>
+    <div class="bg-gray-950 rounded-lg px-4 py-3 font-mono text-sm">
+      <p class="text-gray-500 text-xs mb-1"># Full pipeline: organize → import → descriptions</p>
+      <p class="text-emerald-400">bin/rails ebooks:full_pipeline</p>
+    </div>
+  </div>
+</div>
+
+<!-- Per-Category Breakdown -->
+<div class="card-dark overflow-hidden !transform-none mb-8">
+  <div class="px-5 py-4 border-b border-gray-800/30">
+    <h2 class="font-heading text-lg font-semibold text-gray-200">By Category</h2>
+  </div>
+  <table class="table-dark">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th class="text-right">Ebooks</th>
+        <th class="text-right">With File</th>
+        <th class="text-right">With Cover</th>
+        <th>Cover Progress</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @by_category.each do |cat| %>
+        <tr>
+          <td>
+            <%= link_to cat.name, admin_category_path(cat), class: "text-gold hover:text-gold-light transition-colors" %>
+          </td>
+          <td class="text-right text-gray-400 text-sm"><%= cat.ebook_count %></td>
+          <td class="text-right text-sm <%= cat.file_count.to_i < cat.ebook_count.to_i ? 'text-amber-400' : 'text-emerald-400' %>">
+            <%= cat.file_count %>
+          </td>
+          <td class="text-right text-sm <%= cat.cover_count.to_i < cat.ebook_count.to_i ? 'text-amber-400' : 'text-emerald-400' %>">
+            <%= cat.cover_count %>
+          </td>
+          <td class="w-32">
+            <% pct = cat.ebook_count.to_i.zero? ? 0 : (cat.cover_count.to_i * 100.0 / cat.ebook_count.to_i).round %>
+            <div class="flex items-center gap-2">
+              <div class="flex-1 bg-gray-800 rounded-full h-1.5">
+                <div class="bg-gold h-1.5 rounded-full" style="width: <%= pct %>%"></div>
+              </div>
+              <span class="text-xs text-gray-600 w-8 text-right"><%= pct %>%</span>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Cover Gallery -->
+<% covered = @recent.select { |e| e.cover_image.attached? } %>
+<% if covered.any? %>
+  <div class="card-dark overflow-hidden !transform-none mb-8">
+    <div class="px-5 py-4 border-b border-gray-800/30 flex items-center justify-between">
+      <h2 class="font-heading text-lg font-semibold text-gray-200">Cover Preview (recent)</h2>
+      <span class="text-xs text-gray-500"><%= @stats[:with_cover] %> of <%= @stats[:total] %> generated</span>
+    </div>
+    <div class="p-5 grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-10 gap-3">
+      <% covered.each do |ebook| %>
+        <%= link_to admin_ebook_path(ebook), title: ebook.title,
+              class: "group relative block" do %>
+          <div class="aspect-[3/4] rounded overflow-hidden bg-gray-800/50 ring-1 ring-gray-700/50 group-hover:ring-gold transition-all">
+            <%= image_tag ebook.cover_image,
+                  class: "w-full h-full object-cover",
+                  alt: ebook.title %>
+          </div>
+          <p class="mt-1 text-xs text-gray-600 group-hover:text-gray-400 truncate leading-tight transition-colors">
+            <%= truncate(ebook.title, length: 20) %>
+          </p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Recently Imported -->
+<div class="card-dark overflow-hidden !transform-none">
+  <div class="px-5 py-4 border-b border-gray-800/30">
+    <h2 class="font-heading text-lg font-semibold text-gray-200">Recently Imported (last 20)</h2>
+  </div>
+  <table class="table-dark">
+    <thead>
+      <tr>
+        <th>Cover</th>
+        <th>Title</th>
+        <th>Category</th>
+        <th class="text-center">File</th>
+        <th class="text-center">Cover</th>
+        <th class="text-center">Description</th>
+        <th>Imported</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent.each do |ebook| %>
+        <tr>
+          <td>
+            <%= link_to truncate(ebook.title, length: 45), admin_ebook_path(ebook),
+                  class: "text-gold hover:text-gold-light transition-colors text-sm" %>
+          </td>
+          <td class="text-gray-400 text-sm"><%= ebook.category&.name || "—" %></td>
+          <td class="text-center">
+            <%= ebook.ebook_file.attached? ?
+              '<span class="text-emerald-400 text-sm">✓</span>'.html_safe :
+              '<span class="text-gray-700 text-sm">—</span>'.html_safe %>
+          </td>
+          <td>
+            <% if ebook.cover_image.attached? %>
+              <div class="w-8 h-10 rounded overflow-hidden bg-gray-800/50">
+                <%= image_tag ebook.cover_image, class: "w-full h-full object-cover", alt: "" %>
+              </div>
+            <% else %>
+              <div class="w-8 h-10 rounded bg-gray-800/50 flex items-center justify-center">
+                <span class="text-gray-700 text-xs">✗</span>
+              </div>
+            <% end %>
+          </td>
+          <td class="text-center">
+            <% has_desc = ebook.description.present? && !ebook.description.start_with?("Imported from S3") %>
+            <%= has_desc ?
+              '<span class="text-emerald-400 text-sm">✓</span>'.html_safe :
+              '<span class="text-amber-500 text-sm">✗</span>'.html_safe %>
+          </td>
+          <td class="text-gray-500 text-sm"><%= ebook.created_at.strftime("%b %d, %Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

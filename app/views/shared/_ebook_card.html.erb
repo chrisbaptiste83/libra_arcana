@@ -1,15 +1,46 @@
-<div class="card-dark overflow-hidden group" data-controller="fade-in">
-  <div class="p-4">
-    <div class="mb-1">
-      <% if ebook.category %>
-        <%= link_to ebook.category.name, category_path(slug: ebook.category.slug), class: "text-xs text-mystic-purple-light hover:text-mystic-purple transition-colors" %>
+<div class="card-dark overflow-hidden group flex flex-col" data-controller="fade-in">
+  <%= link_to ebook_path(ebook), class: "block" do %>
+    <div class="aspect-[3/4] bg-gray-800/60 overflow-hidden">
+      <% if ebook.cover_image.attached? %>
+        <%= image_tag ebook.cover_image,
+              class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300",
+              alt: ebook.title %>
+      <% else %>
+        <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+          <svg class="w-10 h-10 text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+          <p class="text-xs text-gray-600 font-heading leading-tight"><%= truncate(ebook.title, length: 35) %></p>
+        </div>
       <% end %>
     </div>
+  <% end %>
+
+  <div class="p-4 flex flex-col flex-1">
+    <div class="mb-1">
+      <% if ebook.category %>
+        <%= link_to ebook.category.name,
+              category_path(slug: ebook.category.slug),
+              class: "text-xs text-mystic-purple-light hover:text-mystic-purple transition-colors" %>
+      <% end %>
+    </div>
+
     <%= link_to ebook_path(ebook), class: "block group/title" do %>
-      <h3 class="font-heading text-lg font-semibold text-gray-100 group-hover/title:text-gold transition-colors leading-tight mb-1"><%= ebook.title %></h3>
+      <h3 class="font-heading text-base font-semibold text-gray-100 group-hover/title:text-gold transition-colors leading-tight mb-1">
+        <%= truncate(ebook.title, length: 50) %>
+      </h3>
     <% end %>
-    <p class="text-sm text-gray-500 mb-3"><%= ebook.author %></p>
-    <div class="flex items-center justify-between">
+    <p class="text-sm text-gray-500 mb-2"><%= ebook.author %></p>
+
+    <% desc = ebook.description.to_s %>
+    <% unless desc.start_with?("Imported from S3") || desc.blank? %>
+      <p class="text-xs text-gray-400 line-clamp-2 mb-3 flex-1"><%= desc %></p>
+    <% else %>
+      <div class="flex-1"></div>
+    <% end %>
+
+    <div class="flex items-center justify-between mt-auto pt-2">
       <span class="text-xs text-gray-500">
         <%= ebook.ebook_file.attached? ? "Ready to read" : "File coming soon" %>
       </span>

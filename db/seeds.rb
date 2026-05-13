@@ -88,7 +88,7 @@ ebooks_data = [
   { title: "Grimoire of Gems: The Crystal Witch's Bible", author: "Petra Luminara", page_count: 402, isbn: "978-0-00-000019-5", publication_year: 2024, featured: false, category: "Crystal Healing",
     description: "Over 200 crystals and gemstones catalogued with their metaphysical properties, chakra associations, and magical uses. Includes crystal grid layouts, elixir recipes, and ritual applications for every occasion." },
   { title: "Stones of Power: Crystal Magic for Transformation", author: "Ember Quartzfield", page_count: 198, isbn: "978-0-00-000020-1", publication_year: 2025, featured: false, category: "Crystal Healing",
-    description: "A practical, hands-on guide to working with crystals for personal transformation. Learn to program stones, build crystal grids, create gem elixirs, and use crystals in meditation and energy healing." },
+    description: "A practical, hands-on guide to working with crystals for personal transformation. Learn to program stones, build crystal grids, create gem elixirs, and use crystals in meditation and energy healing." }
 ]
 
 ebooks_data.each do |data|

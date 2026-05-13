@@ -57,7 +57,7 @@ if generate_covers
     return 0 if len < 10
 
     # Prefer moderate-length text (title page) over huge text blocks.
-    base = [len, 2000].min / 200.0
+    base = [ len, 2000 ].min / 200.0
     bonus = if len.between?(20, 500)
       2.0
     elsif len.between?(501, 1200)
@@ -80,14 +80,14 @@ if generate_covers
     end
 
     begin
-      Tempfile.create(["ebook", ".pdf"]) do |pdf_tmp|
+      Tempfile.create([ "ebook", ".pdf" ]) do |pdf_tmp|
         pdf_tmp.binmode
         pdf_tmp.write(ebook.ebook_file.download)
         pdf_tmp.flush
 
         source_pdf = pdf_tmp.path
         if repair_pdfs
-          Tempfile.create(["ebook_repair", ".pdf"]) do |repaired|
+          Tempfile.create([ "ebook_repair", ".pdf" ]) do |repaired|
             _out, err, status = Open3.capture3(
               "qpdf",
               "--qdf",
@@ -110,7 +110,7 @@ if generate_covers
           (1..scan_pages).each do |page|
             prefix = File.join(dir, "page-#{page}")
             png_path = "#{prefix}.png"
-            cmd = ["pdftoppm", "-f", page.to_s, "-l", page.to_s, "-png", "-singlefile", source_pdf, prefix]
+            cmd = [ "pdftoppm", "-f", page.to_s, "-l", page.to_s, "-png", "-singlefile", source_pdf, prefix ]
             _out, err, status = Open3.capture3(*cmd)
             unless status.success? && File.exist?(png_path) && File.size?(png_path)
               raise "pdftoppm failed (exit=#{status.exitstatus}) cmd=#{cmd.join(' ')} err=#{err.strip}"
@@ -182,7 +182,7 @@ if extract_metadata
     end
 
     begin
-      Tempfile.create(["ebook", ".pdf"]) do |pdf_tmp|
+      Tempfile.create([ "ebook", ".pdf" ]) do |pdf_tmp|
         pdf_tmp.binmode
         pdf_tmp.write(ebook.ebook_file.download)
         pdf_tmp.flush
