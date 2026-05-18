@@ -47,4 +47,4 @@ group :development do
   gem "erb-formatter", require: false
 end
 
-gem "thruster", "~> 0.1.20"
+gem "thruster", "~> 0.1.21"
