@@ -205,12 +205,14 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.3-arm-linux-musl)
       racc (~> 1.4)
+    nokogiri (1.19.3-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.19.3-x86_64-linux-gnu)
       racc (~> 1.4)
     nokogiri (1.19.3-x86_64-linux-musl)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    pagy (43.5.3)
+    pagy (43.5.4)
       json
       uri
       yaml
@@ -370,9 +372,10 @@ GEM
     syntax_tree (6.3.0)
       prettier_print (>= 1.2.0)
     thor (1.5.0)
-    thruster (0.1.20)
-    thruster (0.1.20-aarch64-linux)
-    thruster (0.1.20-x86_64-linux)
+    thruster (0.1.21)
+    thruster (0.1.21-aarch64-linux)
+    thruster (0.1.21-arm64-darwin)
+    thruster (0.1.21-x86_64-linux)
     timeout (0.6.1)
     tsort (0.2.0)
     turbo-rails (2.0.23)
@@ -395,6 +398,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    yaml (0.4.0)
     zeitwerk (2.7.5)
 
 PLATFORMS
@@ -434,7 +438,7 @@ DEPENDENCIES
   solid_cache
   solid_queue
   stimulus-rails
-  thruster (~> 0.1.20)
+  thruster (~> 0.1.21)
   turbo-rails
   tzinfo-data
   web-console
